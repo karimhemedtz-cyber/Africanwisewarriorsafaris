@@ -126,26 +126,47 @@ export const subscribeToAuth = (callback: (user: AppUser | null) => void): (() =
     callback(stored ? JSON.parse(stored) : null);
     return () => {};
   }
+
+  const buildUser = (u: any): AppUser => ({
+    uid: u.id,
+    email: u.email!,
+    role: getRoleFromEmail(u.email!),
+    displayName: u.user_metadata?.full_name || u.email!.split('@')[0],
+    emailVerified: !!u.email_confirmed_at
+  });
+
+  // Check existing session immediately on load
   supabase!.auth.getSession().then(({ data }) => {
     if (data.session?.user) {
-      const u = data.session.user;
-      callback({
-        uid: u.id, email: u.email!, role: getRoleFromEmail(u.email!),
-        displayName: u.user_metadata?.full_name || u.email!.split('@')[0],
-        emailVerified: !!u.email_confirmed_at
-      });
-    } else callback(null);
+      const user = buildUser(data.session.user);
+      localStorage.setItem('safari_current_user', JSON.stringify(user));
+      callback(user);
+    } else {
+      // Fall back to localStorage (handles admin local session)
+      const stored = localStorage.getItem('safari_current_user');
+      callback(stored ? JSON.parse(stored) : null);
+    }
   });
+
+  // Listen for auth changes (login / logout)
   const { data: { subscription } } = supabase!.auth.onAuthStateChange((_event, session) => {
     if (session?.user) {
-      const u = session.user;
-      callback({
-        uid: u.id, email: u.email!, role: getRoleFromEmail(u.email!),
-        displayName: u.user_metadata?.full_name || u.email!.split('@')[0],
-        emailVerified: !!u.email_confirmed_at
-      });
-    } else callback(null);
+      const user = buildUser(session.user);
+      localStorage.setItem('safari_current_user', JSON.stringify(user));
+      callback(user);
+    } else {
+      // Only clear if no local admin session
+      const stored = localStorage.getItem('safari_current_user');
+      const localUser = stored ? JSON.parse(stored) : null;
+      if (localUser?.uid === 'admin_uid_karimu') {
+        callback(localUser); // keep local admin session alive
+      } else {
+        localStorage.removeItem('safari_current_user');
+        callback(null);
+      }
+    }
   });
+
   return () => subscription.unsubscribe();
 };
 
