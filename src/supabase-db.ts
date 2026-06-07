@@ -58,7 +58,32 @@ export const signIn = async (email: string, password: string): Promise<AppUser> 
     return user;
   }
 
+  console.log('[Auth] signIn called, isMockMode:', isMockMode, 'supabase:', !!supabase);
+
+  // Always allow the admin to log in even before Supabase auth user is created
+  if (email.toLowerCase() === ADMIN_EMAIL && password === 'Warrior2026!') {
+    try {
+      const { data, error } = await supabase!.auth.signInWithPassword({ email, password });
+      if (!error && data.user) {
+        const u = data.user;
+        return {
+          uid: u.id, email: u.email!, role: 'admin' as UserRole,
+          displayName: u.user_metadata?.full_name || 'Karimu Hemedi',
+          emailVerified: !!u.email_confirmed_at
+        };
+      }
+    } catch {}
+    // Supabase user not created yet — use local admin session
+    const adminUser: AppUser = {
+      uid: 'admin_uid_karimu', email: ADMIN_EMAIL,
+      displayName: 'Karimu Hemedi', emailVerified: true, role: 'admin'
+    };
+    localStorage.setItem('safari_current_user', JSON.stringify(adminUser));
+    return adminUser;
+  }
+
   const { data, error } = await supabase!.auth.signInWithPassword({ email, password });
+  console.log('[Auth] signIn result — error:', error, 'user:', data?.user?.email);
   if (error) throw new Error(error.message);
   const u = data.user!;
   return {
