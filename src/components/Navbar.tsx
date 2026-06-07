@@ -117,7 +117,8 @@ export default function Navbar({
                   </span>
                 </div>
 
-                {currentUser.role === 'admin' && (
+                {currentUser.role === 'admin' && 
+                 currentUser.email?.toLowerCase().trim() === 'karimhemedi@yahoo.com' && (
                   <button
                     id="btn_navbar_toggle_admin"
                     onClick={onToggleAdminView}
@@ -237,7 +238,8 @@ export default function Navbar({
                     </span>
                   </div>
 
-                  {currentUser.role === 'admin' && (
+                  {currentUser.role === 'admin' && 
+                   currentUser.email?.toLowerCase().trim() === 'karimhemedi@yahoo.com' && (
                     <button
                       id="btn_mobile_menu_admin"
                       onClick={() => {
