@@ -15,13 +15,22 @@ import {
 } from './types';
 
 // ─────────────────────────────────────────────
-// CONSTANTS
+// ADMIN — SINGLE OWNER, HARD-LOCKED
+// Only karimhemedi@yahoo.com is ever admin. No exceptions.
 // ─────────────────────────────────────────────
 const ADMIN_EMAIL = 'karimhemedi@yahoo.com';
 export const isMockMode = !isSupabaseConfigured;
 
-const getRoleFromEmail = (email: string): UserRole =>
-  email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user';
+const getRoleFromEmail = (email: string): UserRole => {
+  if (!email) return 'user';
+  return email.toLowerCase().trim() === ADMIN_EMAIL ? 'admin' : 'user';
+};
+
+// Called on every AppUser returned — prevents any role escalation
+const enforceRole = (user: AppUser): AppUser => ({
+  ...user,
+  role: user.email.toLowerCase().trim() === ADMIN_EMAIL ? 'admin' : 'user'
+});
 
 // ─────────────────────────────────────────────
 // LOCAL STORAGE FALLBACK (offline/mock mode)
@@ -90,7 +99,8 @@ export const signIn = async (email: string, password: string): Promise<AppUser> 
     uid: u.id, email: u.email!, role: getRoleFromEmail(u.email!),
     displayName: u.user_metadata?.full_name || u.email!.split('@')[0],
     emailVerified: !!u.email_confirmed_at
-  };
+  });
+  return enforceRole(rawUser);
 };
 
 export const signUp = async (fullName: string, email: string, password: string): Promise<AppUser> => {
@@ -127,7 +137,7 @@ export const subscribeToAuth = (callback: (user: AppUser | null) => void): (() =
     return () => {};
   }
 
-  const buildUser = (u: any): AppUser => ({
+  const buildUser = (u: any): AppUser => enforceRole({
     uid: u.id,
     email: u.email!,
     role: getRoleFromEmail(u.email!),
