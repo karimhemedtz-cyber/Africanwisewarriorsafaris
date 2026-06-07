@@ -38,7 +38,9 @@ type PageView =
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
-  const [isAdminViewActive, setIsAdminViewActive] = useState(false);
+  const [isAdminViewActive, setIsAdminViewActive] = useState(() => {
+    return localStorage.getItem('safari_admin_view') === 'true';
+  });
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
   const [currentPage, setCurrentPage] = useState<PageView>({ type: 'home' });
@@ -59,8 +61,13 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = subscribeToAuth((user) => {
       setCurrentUser(user);
-      if (user && user.role === 'admin') setIsAdminViewActive(true);
-      else setIsAdminViewActive(false);
+      if (user && user.role === 'admin') {
+        setIsAdminViewActive(true);
+        localStorage.setItem('safari_admin_view', 'true');
+      } else {
+        setIsAdminViewActive(false);
+        localStorage.removeItem('safari_admin_view');
+      }
       setLoadingApp(false);
     });
     return () => unsubscribe();
@@ -97,8 +104,13 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    try { await logout(); setCurrentUser(null); setIsAdminViewActive(false); }
-    catch (err) { console.error("Logout failed:", err); }
+    try {
+      await logout();
+      setCurrentUser(null);
+      setIsAdminViewActive(false);
+      localStorage.removeItem('safari_admin_view');
+      localStorage.removeItem('safari_current_user');
+    } catch (err) { console.error("Logout failed:", err); }
   };
 
   const handleOpenAuth = (mode: 'signin' | 'signup') => {
@@ -107,7 +119,10 @@ export default function App() {
 
   const handleAuthSuccess = (user: AppUser) => {
     setCurrentUser(user);
-    if (user.role === 'admin') setIsAdminViewActive(true);
+    if (user.role === 'admin') {
+      setIsAdminViewActive(true);
+      localStorage.setItem('safari_admin_view', 'true');
+    }
   };
 
   const scrollSection = (id: string) => {
@@ -124,9 +139,11 @@ export default function App() {
     if (page.type !== 'home' && isAdminViewActive) setIsAdminViewActive(false);
   };
 
-  const isAdmin = currentUser?.role === 'admin';
+  const isAdmin = currentUser?.role === 'admin' && 
+                  currentUser?.email?.toLowerCase().trim() === 'karimhemedi@yahoo.com';
 
   const renderPage = () => {
+    // Triple guard — role, email AND isAdminViewActive must all be true
     if (isAdminViewActive && isAdmin) {
       return (
         <AdminPanel 
