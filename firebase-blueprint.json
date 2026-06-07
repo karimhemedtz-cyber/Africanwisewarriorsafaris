@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "Package": {
+      "title": "Package",
+      "description": "A luxury safari package for African Wase Warrior Safaris",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique package ID" },
+        "name": { "type": "string", "description": "Package name" },
+        "price": { "type": "integer", "description": "Price in USD" },
+        "route": { "type": "string", "description": "Route and destination path" },
+        "days": { "type": "integer", "description": "Number of days" },
+        "description": { "type": "string", "description": "Detailed safari itinerary and highlights" },
+        "imageUrl": { "type": "string", "description": "URL of the safari image" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "name", "price", "route", "days", "description", "imageUrl", "createdAt"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "A safari booking request sent by a user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "packageId": { "type": "string" },
+        "packageName": { "type": "string" },
+        "people": { "type": "integer" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "reviewed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "email", "packageId", "packageName", "people", "status", "createdAt"]
+    },
+    "News": {
+      "title": "News",
+      "description": "Safari updates, conservation news, and warrior travel logs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "content", "createdAt"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Customer feedback and reviews for the safaris",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "comment": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "username", "comment", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/packages/{packageId}": {
+      "schema": "Package",
+      "description": "Safari packages available for booking"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Booking and reservation requests"
+    },
+    "/news/{newsId}": {
+      "schema": "News",
+      "description": "Official safari news and blog updates published by admin"
+    },
+    "/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "Feedback, comments, and reviews posted by verified patrons"
+    }
+  }
+}
