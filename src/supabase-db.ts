@@ -371,7 +371,7 @@ const DEFAULT_PACKAGES: Package[] = [
     route: 'Arusha → Tarangire → Serengeti → Ngorongoro → Arusha',
     days: 5,
     description: 'Follow the greatest wildlife show on Earth. Witness 1.5 million wildebeest crossing the Mara River on this all-inclusive luxury expedition with private tented camps.',
-    imageUrl: '/src/assets/images/package_serengeti_1779964123153.png',
+    imageUrl: '/images/package_serengeti_1779964123153.png',
     createdAt: new Date('2026-01-01').toISOString()
   },
   {
@@ -381,7 +381,7 @@ const DEFAULT_PACKAGES: Package[] = [
     route: 'Nairobi → Great Rift Valley → Maasai Mara → Nairobi',
     days: 7,
     description: "Watch black-maned lions patrol their pride, observe cheetahs chasing prey, and visit a traditional Maasai warrior village. Conclude each day at an authentic five-star canvas luxury camp.",
-    imageUrl: '/src/assets/images/package_masaimara_1779964145785.png',
+    imageUrl: '/images/package_masaimara_1779964145785.png',
     createdAt: new Date('2026-01-02').toISOString()
   },
   {
@@ -391,7 +391,7 @@ const DEFAULT_PACKAGES: Package[] = [
     route: 'Arusha → Ngorongoro Crater → Lake Manyara → Arusha',
     days: 3,
     description: "Descend into the world's largest intact volcanic caldera sheltering over 25,000 large mammals including the endangered black rhino. A condensed luxury safari for time-pressed adventurers.",
-    imageUrl: '/src/assets/images/package_ngorongoro_1779964167185.png',
+    imageUrl: '/images/package_ngorongoro_1779964167185.png',
     createdAt: new Date('2026-01-03').toISOString()
   }
 ];
@@ -401,14 +401,14 @@ const DEFAULT_NEWS: NewsItem[] = [
     id: 'news_1',
     title: 'The Great Wildebeest Migration Reaches the Mara River',
     content: 'Our scouts report that massive herds of wildebeests are piling up along the southern banks of the Mara River. The dangerous annual crossings have begun earlier than expected this season!',
-    imageUrl: '/src/assets/images/package_serengeti_1779964123153.png',
+    imageUrl: '/images/package_serengeti_1779964123153.png',
     createdAt: new Date('2026-05-26T08:00:00Z').toISOString()
   },
   {
     id: 'news_2',
     title: 'Wise Warrior Conservation Program Receives Excellence Award',
     content: 'We are proud to announce that the African Wise Warrior Safaris foundation has received the East African Conservation Vanguard Trophy. A percentage of all bookings goes directly to financing local antipoaching village rangers.',
-    imageUrl: '/src/assets/images/package_masaimara_1779964145785.png',
+    imageUrl: '/images/package_masaimara_1779964145785.png',
     createdAt: new Date('2026-05-20T14:30:00Z').toISOString()
   }
 ];

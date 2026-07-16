@@ -56,7 +56,7 @@ export default function AdminPanel({
     route: '',
     days: 5,
     description: '',
-    imageUrl: '/src/assets/images/package_serengeti_1779964123153.png'
+    imageUrl: '/images/package_serengeti_1779964123153.png'
   });
 
   // News Form state
@@ -69,9 +69,9 @@ export default function AdminPanel({
 
   // Photo Presets for ease of admin mock design
   const IMAGE_PRESETS = [
-    { name: 'Serengeti Migration', url: '/src/assets/images/package_serengeti_1779964123153.png' },
-    { name: 'Maasai Mara Lion', url: '/src/assets/images/package_masaimara_1779964145785.png' },
-    { name: 'Ngorongoro Rhino', url: '/src/assets/images/package_ngorongoro_1779964167185.png' }
+    { name: 'Serengeti Migration', url: '/images/package_serengeti_1779964123153.png' },
+    { name: 'Maasai Mara Lion', url: '/images/package_masaimara_1779964145785.png' },
+    { name: 'Ngorongoro Rhino', url: '/images/package_ngorongoro_1779964167185.png' }
   ];
 
   const triggerRefresh = async (msg: string) => {
@@ -103,7 +103,7 @@ export default function AdminPanel({
       route: '',
       days: 5,
       description: '',
-      imageUrl: '/src/assets/images/package_serengeti_1779964123153.png'
+      imageUrl: '/images/package_serengeti_1779964123153.png'
     });
   };
 

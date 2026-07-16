@@ -126,7 +126,7 @@ const DEFAULT_PACKAGES: Package[] = [
     route: 'Arusha - Serengeti - Mara River - Arusha',
     days: 5,
     description: 'Witness millions of wildebeests and zebras risking river crossings and predators across the infinite grasslands of the Serengeti. Spend five days in supreme comfort tracking the Big Five (Lions, Leopards, Elephants, Rhinos, Buffalos) in luxury customized open-roof 4x4 land cruisers.',
-    imageUrl: '/src/assets/images/package_serengeti_1779964123153.png',
+    imageUrl: '/images/package_serengeti_1779964123153.png',
     createdAt: new Date('2026-05-28T10:00:00Z').toISOString()
   },
   {
@@ -136,7 +136,7 @@ const DEFAULT_PACKAGES: Package[] = [
     route: 'Nairobi - Great Rift Valley - Maasai Mara - Nairobi',
     days: 4,
     description: 'Venture deep into Kenya\'s premier wildlife reserve. Watch black-maned lions patrol their pride, observe cheetahs chasing prey, and visit a traditional Maasai warrior manyatta (village). Conclude each day at an authentic five-star canvas luxury camp under the starlit sky.',
-    imageUrl: '/src/assets/images/package_masaimara_1779964145785.png',
+    imageUrl: '/images/package_masaimara_1779964145785.png',
     createdAt: new Date('2026-05-28T10:05:00Z').toISOString()
   },
   {
@@ -146,7 +146,7 @@ const DEFAULT_PACKAGES: Package[] = [
     route: 'Arusha - Ngorongoro Crater Lodge - Lake Magadi - Arusha',
     days: 3,
     description: 'Descend 600 meters down into a gorgeous, extinct volcanic caldera. This scenic physical haven protects over 25,000 large mammals, including the rare endangered black rhinoceros. Experience breathtaking scenic viewpoints mixed with pink flamingos spanning across Lake Magadi.',
-    imageUrl: '/src/assets/images/package_ngorongoro_1779964167185.png',
+    imageUrl: '/images/package_ngorongoro_1779964167185.png',
     createdAt: new Date('2026-05-28T10:10:00Z').toISOString()
   }
 ];

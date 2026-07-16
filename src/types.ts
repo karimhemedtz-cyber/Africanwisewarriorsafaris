@@ -82,7 +82,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   heroTitle: 'African Wise Warrior Safaris',
   heroSubtitle: 'Welcome to the Untamed',
   heroDescription: "Embark on the ultimate luxurious pilgrimage across East Africa's most storied fields. Through the wisdom of seasoned Wise warrior guides, witness the natural wonders of Serengeti, Maasai Mara, and Ngorongoro Crater in supreme, private luxury.",
-  heroImage: '/src/assets/images/package_masaimara_1779964145785.png',
+  heroImage: '/images/package_masaimara_1779964145785.png',
   heroBadgeText: 'Award-Winning Private Safaris',
   phone: '+255 750 916 698',
   email: 'Karimhemedi@yahoo.com',

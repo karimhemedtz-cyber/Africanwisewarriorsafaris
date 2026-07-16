@@ -17,7 +17,7 @@ export default function DestinationsPage({ onSelectCountry }: DestinationsPagePr
       {/* Page Header */}
       <div className="bg-brand-dark text-white py-20 px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img src="/src/assets/images/safari_hero_1779964102826.png" alt="" className="w-full h-full object-cover" />
+          <img src="/images/safari_hero_1779964102826.png" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative max-w-2xl mx-auto">
           <div className="flex items-center justify-center space-x-2 mb-3">

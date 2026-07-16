@@ -9,9 +9,9 @@ import { Country, Park } from '../eastAfricaData';
 import { X, Save, Plus, Trash2 } from 'lucide-react';
 
 const IMAGE_PRESETS = [
-  { name: 'Serengeti', url: '/src/assets/images/package_serengeti_1779964123153.png' },
-  { name: 'Maasai Mara', url: '/src/assets/images/package_masaimara_1779964145785.png' },
-  { name: 'Ngorongoro', url: '/src/assets/images/package_ngorongoro_1779964167185.png' },
+  { name: 'Serengeti', url: '/images/package_serengeti_1779964123153.png' },
+  { name: 'Maasai Mara', url: '/images/package_masaimara_1779964145785.png' },
+  { name: 'Ngorongoro', url: '/images/package_ngorongoro_1779964167185.png' },
 ];
 
 interface CountryEditorProps {
