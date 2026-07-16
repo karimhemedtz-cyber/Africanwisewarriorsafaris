@@ -161,8 +161,8 @@ const DEFAULT_NEWS: NewsItem[] = [
   },
   {
     id: 'news_2',
-    title: 'Wase Warrior Conservation Program Receives Excellence Award',
-    content: 'We are incredibly proud to announce that the African Wase Warrior Safaris foundation has received the East African Conservation Vanguard Trophy. A substantial percentage of all safari bookings go directly to financing local community elders and antipoaching village rangers.',
+    title: 'Wise Warrior Conservation Program Receives Excellence Award',
+    content: 'We are incredibly proud to announce that the African Wise Warrior Safaris foundation has received the East African Conservation Vanguard Trophy. A substantial percentage of all safari bookings go directly to financing local community elders and antipoaching village rangers.',
     imageUrl: '',
     createdAt: new Date('2026-05-20T14:30:00Z').toISOString()
   }

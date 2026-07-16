@@ -56,7 +56,7 @@ export default function Navbar({
             </div>
             <div>
               <span className="block font-serif text-lg font-bold text-brand-green italic leading-none">
-                African Wase Warrior
+                African Wise Warrior
               </span>
               <span className="block text-[10px] text-brand-olive uppercase font-bold tracking-[0.2em] mt-1">
                 Safaris & Expeditions

@@ -1,6 +1,6 @@
 # Firestore Security Specification
 
-This document details the Zero-Trust security posture and Attribute-Based Access Control (ABAC) design for African Wase Warrior Safaris.
+This document details the Zero-Trust security posture and Attribute-Based Access Control (ABAC) design for African Wise Warrior Safaris.
 
 ## 1. Data Invariants
 1. **Admin Control over Catalogs**: Only authenticated admins (such as the predefined `Karimhemedi@yahoo.com`) can create, update, or delete packages (`/packages/{id}`) and news posts (`/news/{id}`).

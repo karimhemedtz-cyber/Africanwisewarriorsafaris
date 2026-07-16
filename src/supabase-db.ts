@@ -95,12 +95,11 @@ export const signIn = async (email: string, password: string): Promise<AppUser> 
   console.log('[Auth] signIn result — error:', error, 'user:', data?.user?.email);
   if (error) throw new Error(error.message);
   const u = data.user!;
-  return {
+  return enforceRole({
     uid: u.id, email: u.email!, role: getRoleFromEmail(u.email!),
     displayName: u.user_metadata?.full_name || u.email!.split('@')[0],
     emailVerified: !!u.email_confirmed_at
   });
-  return enforceRole(rawUser);
 };
 
 export const signUp = async (fullName: string, email: string, password: string): Promise<AppUser> => {
@@ -407,9 +406,9 @@ const DEFAULT_NEWS: NewsItem[] = [
   },
   {
     id: 'news_2',
-    title: 'Wase Warrior Conservation Program Receives Excellence Award',
-    content: 'We are proud to announce that the African Wase Warrior Safaris foundation has received the East African Conservation Vanguard Trophy. A percentage of all bookings goes directly to financing local antipoaching village rangers.',
-    imageUrl: '/src/assets/images/safari_hero_1779964102826.png',
+    title: 'Wise Warrior Conservation Program Receives Excellence Award',
+    content: 'We are proud to announce that the African Wise Warrior Safaris foundation has received the East African Conservation Vanguard Trophy. A percentage of all bookings goes directly to financing local antipoaching village rangers.',
+    imageUrl: '/src/assets/images/package_masaimara_1779964145785.png',
     createdAt: new Date('2026-05-20T14:30:00Z').toISOString()
   }
 ];

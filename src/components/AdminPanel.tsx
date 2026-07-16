@@ -71,8 +71,7 @@ export default function AdminPanel({
   const IMAGE_PRESETS = [
     { name: 'Serengeti Migration', url: '/src/assets/images/package_serengeti_1779964123153.png' },
     { name: 'Maasai Mara Lion', url: '/src/assets/images/package_masaimara_1779964145785.png' },
-    { name: 'Ngorongoro Rhino', url: '/src/assets/images/package_ngorongoro_1779964167185.png' },
-    { name: 'Sunset Savannah Hero', url: '/src/assets/images/safari_hero_1779964102826.png' }
+    { name: 'Ngorongoro Rhino', url: '/src/assets/images/package_ngorongoro_1779964167185.png' }
   ];
 
   const triggerRefresh = async (msg: string) => {
@@ -237,7 +236,7 @@ export default function AdminPanel({
           <div>
             <div className="flex items-center space-x-2 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-2">
               <LayoutDashboard className="w-4 h-4" />
-              <span>African Wase Warrior Headquarters Security Core</span>
+              <span>African Wise Warrior Headquarters Security Core</span>
             </div>
             <h1 className="text-3xl font-serif font-black tracking-tight text-stone-900 leading-none">
               Owner Administration Panel
@@ -429,7 +428,7 @@ export default function AdminPanel({
 
                     <div>
                       <label className="block text-[10px] font-bold text-stone-700 uppercase tracking-wider mb-1">Select Custom Safari Image Placeholder</label>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2">
                         {IMAGE_PRESETS.map((p, i) => (
                           <div 
                             key={i}

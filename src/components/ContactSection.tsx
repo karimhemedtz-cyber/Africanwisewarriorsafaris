@@ -14,7 +14,7 @@ interface ContactSectionProps {
 }
 
 export default function ContactSection({ settings, isAdmin, onEdit }: ContactSectionProps) {
-  const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=Jambo!%20I%20am%20interested%20in%20booking%20a%20luxury%20safari%20with%20African%20Wase%20Warrior%20Safaris.`;
+  const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=Jambo!%20I%20am%20interested%20in%20booking%20a%20luxury%20safari%20with%20African%20Wise%20Warrior%20Safaris.`;
 
   return (
     <section id="contact" className="py-24 bg-[#FDFCF8]/60 border-b border-brand-green/10 relative">
