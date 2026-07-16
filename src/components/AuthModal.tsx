@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signUp, signIn, isMockMode } from '../supabase-db';
 import { X, Mail, Lock, User, CheckCircle, ShieldAlert } from 'lucide-react';
 import { AppUser } from '../types';
@@ -23,6 +23,16 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMode = 's
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
+
+  // Re-sync to whichever mode (Sign In / Sign Up) triggered this open,
+  // and clear any leftover error/state from the previous time it was opened.
+  useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+      setError('');
+      setVerificationSent(false);
+    }
+  }, [isOpen, initialMode]);
 
   if (!isOpen) return null;
 
@@ -62,9 +72,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMode = 's
       console.error(err);
       setError(err.message || 'An error occurred. Please try again.');
     } finally {
-      if (mode !== 'signup' || error) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 

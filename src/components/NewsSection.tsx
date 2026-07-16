@@ -12,10 +12,9 @@ interface NewsSectionProps {
 }
 
 const FALLBACK_IMAGES = [
-  '/src/assets/images/package_serengeti_1779964123153.png',
-  '/src/assets/images/package_masaimara_1779964145785.png',
-  '/src/assets/images/package_ngorongoro_1779964167185.png',
-  '/src/assets/images/safari_hero_1779964102826.png',
+  '/images/package_serengeti_1779964123153.png',
+  '/images/package_masaimara_1779964145785.png',
+  '/images/package_ngorongoro_1779964167185.png',
 ];
 
 export default function NewsSection({ news }: NewsSectionProps) {

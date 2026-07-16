@@ -103,7 +103,7 @@ export default function BookingPage({ packages, currentUser, onBack, onOpenAuth,
       {/* Header */}
       <div className="bg-brand-dark text-white py-14 px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img src="/src/assets/images/safari_hero_1779964102826.png" alt="" className="w-full h-full object-cover" />
+          <img src="/images/safari_hero_1779964102826.png" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative max-w-3xl mx-auto">
           <button

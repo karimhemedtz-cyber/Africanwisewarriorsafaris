@@ -9,10 +9,9 @@ import { Country, Park } from '../eastAfricaData';
 import { X, Save, Plus, Trash2 } from 'lucide-react';
 
 const IMAGE_PRESETS = [
-  { name: 'Serengeti', url: '/src/assets/images/package_serengeti_1779964123153.png' },
-  { name: 'Maasai Mara', url: '/src/assets/images/package_masaimara_1779964145785.png' },
-  { name: 'Ngorongoro', url: '/src/assets/images/package_ngorongoro_1779964167185.png' },
-  { name: 'Savannah', url: '/src/assets/images/safari_hero_1779964102826.png' },
+  { name: 'Serengeti', url: '/images/package_serengeti_1779964123153.png' },
+  { name: 'Maasai Mara', url: '/images/package_masaimara_1779964145785.png' },
+  { name: 'Ngorongoro', url: '/images/package_ngorongoro_1779964167185.png' },
 ];
 
 interface CountryEditorProps {
@@ -71,7 +70,7 @@ export function CountryEditor({ country, settings, onSave, onClose }: CountryEdi
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">Hero Image</label>
-              <div className="grid grid-cols-4 gap-2 mb-2">
+              <div className="grid grid-cols-3 gap-2 mb-2">
                 {IMAGE_PRESETS.map(p => (
                   <button key={p.url} type="button" onClick={() => setHeroImage(p.url)}
                     className={`rounded-lg overflow-hidden border-2 transition-all ${heroImage === p.url ? 'border-brand-green' : 'border-transparent'}`}>
@@ -165,7 +164,7 @@ export function ParkEditor({ park, settings, onSave, onClose }: ParkEditorProps)
             {/* Cover Image */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">Cover / Hero Image</label>
-              <div className="grid grid-cols-4 gap-2 mb-2">
+              <div className="grid grid-cols-3 gap-2 mb-2">
                 {IMAGE_PRESETS.map(p => (
                   <button key={p.url} type="button" onClick={() => setCoverImage(p.url)}
                     className={`rounded-lg overflow-hidden border-2 transition-all ${coverImage === p.url ? 'border-brand-green' : 'border-transparent'}`}>

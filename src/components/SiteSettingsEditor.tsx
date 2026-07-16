@@ -8,10 +8,9 @@ import { SiteSettings } from '../types';
 import { X, Save, Image, Globe, Phone, MapPin } from 'lucide-react';
 
 const IMAGE_PRESETS = [
-  { name: 'Serengeti Migration', url: '/src/assets/images/package_serengeti_1779964123153.png' },
-  { name: 'Maasai Mara', url: '/src/assets/images/package_masaimara_1779964145785.png' },
-  { name: 'Ngorongoro Crater', url: '/src/assets/images/package_ngorongoro_1779964167185.png' },
-  { name: 'Sunset Savannah', url: '/src/assets/images/safari_hero_1779964102826.png' },
+  { name: 'Serengeti Migration', url: '/images/package_serengeti_1779964123153.png' },
+  { name: 'Maasai Mara', url: '/images/package_masaimara_1779964145785.png' },
+  { name: 'Ngorongoro Crater', url: '/images/package_ngorongoro_1779964167185.png' },
 ];
 
 type EditMode = 'hero' | 'contact' | null;
@@ -107,7 +106,7 @@ export default function SiteSettingsEditor({ mode, settings, onSave, onClose }: 
               {/* Image */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">Background Image</label>
-                <div className="grid grid-cols-4 gap-2 mb-2">
+                <div className="grid grid-cols-3 gap-2 mb-2">
                   {IMAGE_PRESETS.map(p => (
                     <button
                       key={p.url}

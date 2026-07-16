@@ -76,7 +76,7 @@ export default function FeedbackSection({
             Patron reviews & feedback
           </span>
           <h2 className="mt-2 text-3xl sm:text-5xl font-serif italic text-brand-green">
-            Wase Patrons Discussion
+            Wise Patrons Discussion
           </h2>
           <div className="mt-4 max-w-xl mx-auto text-brand-olive text-xs font-serif italic">
             Read testimonials from global adventurers who joined our expeditions, 
@@ -174,7 +174,7 @@ export default function FeedbackSection({
         <div id="comments_feed" className="space-y-6">
           {comments.length === 0 ? (
             <div className="text-center py-6 text-brand-olive text-sm font-serif italic">
-              Be the first to leave a feedback testimonial on African Wase Warrior Safaris!
+              Be the first to leave a feedback testimonial on African Wise Warrior Safaris!
             </div>
           ) : (
             comments.map(c => {

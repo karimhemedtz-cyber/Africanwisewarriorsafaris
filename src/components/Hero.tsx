@@ -24,7 +24,7 @@ export default function Hero({ onExploreClick, onContactClick, settings, isAdmin
       <div className="absolute inset-0 z-0">
         <img
           src={settings.heroImage}
-          alt="African Wase Warrior Safaris Landscape"
+          alt="African Wise Warrior Safaris Landscape"
           className="w-full h-full object-cover scale-105 animate-subtle-spin"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-black/60" />

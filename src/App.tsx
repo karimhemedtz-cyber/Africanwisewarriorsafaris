@@ -257,7 +257,7 @@ export default function App() {
                 <div className="w-8 h-8 bg-brand-green text-white rounded-lg flex items-center justify-center font-bold">
                   <Compass className="w-5 h-5 text-brand-cream" />
                 </div>
-                <span className="font-serif italic text-white font-bold tracking-wide uppercase">African Wase Warrior Safaris</span>
+                <span className="font-serif italic text-white font-bold tracking-wide uppercase">African Wise Warrior Safaris</span>
               </div>
               <p className="text-xs text-brand-cream/70 max-w-sm leading-relaxed font-sans">
                 Guiding intrepid souls across East Africa's wild horizons with unmatched warrior heritage, supreme travel comfort, and rigorous commitment to ecological conservation.
@@ -287,7 +287,7 @@ export default function App() {
           </div>
           <hr className="border-brand-green/10 my-8" />
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-brand-cream/40 font-sans">
-            <div>© {new Date().getFullYear()} African Wase Warrior Safaris. All Rights Reserved. Private expeditions licensed by TTB.</div>
+            <div>© {new Date().getFullYear()} African Wise Warrior Safaris. All Rights Reserved. Private expeditions licensed by TTB.</div>
             <div className="flex items-center space-x-1 font-semibold text-[11px] uppercase tracking-wider">
               <span className="font-serif italic text-brand-olive font-bold">Crafted in honour of the Savanna Ecosystem</span>
               <Heart className="w-3 h-3 text-[#5A6A40] fill-current animate-pulse" />
