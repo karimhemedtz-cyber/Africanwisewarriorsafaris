@@ -140,7 +140,7 @@ export default function App() {
   };
 
   const isAdmin = currentUser?.role === 'admin' && 
-                  currentUser?.email?.toLowerCase().trim() === 'karimhemedi@yahoo.com';
+                  currentUser?.email?.toLowerCase().trim() === 'karimuhemedi@yahoo.com';
 
   const renderPage = () => {
     // Triple guard — role, email AND isAdminViewActive must all be true

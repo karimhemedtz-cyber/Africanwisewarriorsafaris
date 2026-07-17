@@ -16,9 +16,9 @@ import {
 
 // ─────────────────────────────────────────────
 // ADMIN — SINGLE OWNER, HARD-LOCKED
-// Only karimhemedi@yahoo.com is ever admin. No exceptions.
+// Only karimuhemedi@yahoo.com is ever admin. No exceptions.
 // ─────────────────────────────────────────────
-const ADMIN_EMAIL = 'karimhemedi@yahoo.com';
+const ADMIN_EMAIL = 'karimuhemedi@yahoo.com';
 export const isMockMode = !isSupabaseConfigured;
 
 const getRoleFromEmail = (email: string): UserRole => {
@@ -51,7 +51,7 @@ const LS = {
 
 export const signIn = async (email: string, password: string): Promise<AppUser> => {
   if (isMockMode) {
-    if (email.toLowerCase() === ADMIN_EMAIL && password === 'Warrior2026!') {
+    if (email.toLowerCase() === ADMIN_EMAIL && password === '0781612593') {
       const user: AppUser = {
         uid: 'admin_uid_karimu', email: ADMIN_EMAIL,
         displayName: 'Karimu Hemedi', emailVerified: true, role: 'admin'
@@ -70,7 +70,7 @@ export const signIn = async (email: string, password: string): Promise<AppUser> 
   console.log('[Auth] signIn called, isMockMode:', isMockMode, 'supabase:', !!supabase);
 
   // Always allow the admin to log in even before Supabase auth user is created
-  if (email.toLowerCase() === ADMIN_EMAIL && password === 'Warrior2026!') {
+  if (email.toLowerCase() === ADMIN_EMAIL && password === '0781612593') {
     try {
       const { data, error } = await supabase!.auth.signInWithPassword({ email, password });
       if (!error && data.user) {
