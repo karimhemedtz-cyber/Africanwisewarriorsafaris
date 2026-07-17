@@ -3,7 +3,7 @@
 This document details the Zero-Trust security posture and Attribute-Based Access Control (ABAC) design for African Wise Warrior Safaris.
 
 ## 1. Data Invariants
-1. **Admin Control over Catalogs**: Only authenticated admins (such as the predefined `Karimhemedi@yahoo.com`) can create, update, or delete packages (`/packages/{id}`) and news posts (`/news/{id}`).
+1. **Admin Control over Catalogs**: Only authenticated admins (such as the predefined `Karimuhemedi@yahoo.com`) can create, update, or delete packages (`/packages/{id}`) and news posts (`/news/{id}`).
 2. **Read Access**: Anyone (even guest users) can read the packages collection and news collection.
 3. **Verified Patrons**: Only authenticated users with an email-verified state can write comments (`/comments/{id}`).
 4. **PII and Booking Safety**: Users can create booking requests (`/bookings/{id}`). Admins can read/delete bookings. Standard users can only read their own bookings.

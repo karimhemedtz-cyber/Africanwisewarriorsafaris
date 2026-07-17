@@ -85,7 +85,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   heroImage: '/images/package_masaimara_1779964145785.png',
   heroBadgeText: 'Award-Winning Private Safaris',
   phone: '+255 750 916 698',
-  email: 'Karimhemedi@yahoo.com',
+  email: 'Karimuhemedi@yahoo.com',
   address: 'Wise Warrior Building, Plot 14, Serena Safari Highway, Arusha, Tanzania',
   whatsappNumber: '255750916698',
   countryOverrides: {},

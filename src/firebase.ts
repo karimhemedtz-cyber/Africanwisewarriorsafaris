@@ -204,7 +204,7 @@ initLocalDB();
 
 // Helper to determine role from email
 // Admin email — kept as a normalised constant (lowercase) so comparisons are safe
-const ADMIN_EMAIL = 'karimhemedi@yahoo.com';
+const ADMIN_EMAIL = 'karimuhemedi@yahoo.com';
 
 export const getRoleFromEmail = (email: string): UserRole => {
   return email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user';
@@ -257,7 +257,7 @@ export const signIn = async (email: string, password: string): Promise<AppUser> 
 
   // Special Admin login local simulation bypass for mock
   if (isMockFirebase) {
-    if (email.toLowerCase() === ADMIN_EMAIL && password === 'Warrior2026!') {
+    if (email.toLowerCase() === ADMIN_EMAIL && password === '0781612593') {
       const adminUser: AppUser = {
         uid: 'admin_uid_karimu',
         email: ADMIN_EMAIL,
