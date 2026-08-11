@@ -1,23 +1,17 @@
 /**
- * @license
- * SPDX-License-Identifier: Apache-2.0
+ * Supabase client configuration.
+ * No credentials are hard-coded in the application.
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = ((import.meta.env.VITE_SUPABASE_URL as string) || '').trim().replace(/\/+$/, '');
-const SUPABASE_ANON_KEY = ((import.meta.env.VITE_SUPABASE_ANON_KEY as string) || '').trim();
+const SUPABASE_URL = String(import.meta.env.VITE_SUPABASE_URL || '').trim().replace(/\/+$/, '');
+const SUPABASE_ANON_KEY = String(import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
-// Log in dev/prod so we can debug
-console.log('[Supabase] URL:', SUPABASE_URL || '(not set)');
-console.log('[Supabase] Key starts with:', SUPABASE_ANON_KEY ? SUPABASE_ANON_KEY.slice(0, 20) + '...' : '(not set)');
-
-const isValidUrl = !!SUPABASE_URL && SUPABASE_URL.startsWith('https://') && SUPABASE_URL.includes('supabase.co');
-const isValidKey = !!SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.length > 20;
+const isValidUrl = SUPABASE_URL.startsWith('https://') && SUPABASE_URL.includes('.supabase.co');
+const isValidKey = SUPABASE_ANON_KEY.length > 20;
 
 export const isSupabaseConfigured = isValidUrl && isValidKey;
-
-console.log('[Supabase] Configured:', isSupabaseConfigured);
 
 export const supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {

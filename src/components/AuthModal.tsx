@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { signUp, signIn, isMockMode } from '../supabase-db';
+import { signUp, signIn } from '../supabase-db';
 import { X, Mail, Lock, User, CheckCircle, ShieldAlert } from 'lucide-react';
 import { AppUser } from '../types';
 
@@ -53,12 +53,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMode = 's
         const registered = await signUp(fullName, email, password);
         setVerificationSent(true);
         setLoading(false);
-        // If mock firebase, we can log in instantly
-        if (isMockMode) {
-          setTimeout(() => {
-            onSuccess(registered);
-            onClose();
-          }, 2000);
+        if (registered.emailVerified) {
+          onSuccess(registered);
+          onClose();
         }
       } else {
         if (!email.trim() || !password.trim()) {
@@ -115,22 +112,16 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMode = 's
               <p className="text-sm text-stone-600 max-w-xs">
                 We sent a secure validation link to <strong className="text-emerald-900">{email}</strong>. Please check your inbox and verify your email to log in and comment.
               </p>
-              {isMockMode ? (
-                <div className="mt-4 p-3 bg-emerald-50 text-emerald-800 text-xs rounded-lg">
-                  Logging in automatically in a moment…
-                </div>
-              ) : (
-                <button
-                  id="btn_verify_ack"
-                  onClick={() => {
-                    setVerificationSent(false);
-                    setMode('signin');
-                  }}
-                  className="mt-6 px-6 py-2.5 bg-emerald-800 text-white font-medium rounded-xl hover:bg-emerald-900 transition-colors w-full"
-                >
-                  Return to Sign In
-                </button>
-              )}
+              <button
+                id="btn_verify_ack"
+                onClick={() => {
+                  setVerificationSent(false);
+                  setMode('signin');
+                }}
+                className="mt-6 px-6 py-2.5 bg-emerald-800 text-white font-medium rounded-xl hover:bg-emerald-900 transition-colors w-full"
+              >
+                Return to Sign In
+              </button>
             </div>
           ) : (
             <form id="auth_form" onSubmit={handleSubmit} className="space-y-4">

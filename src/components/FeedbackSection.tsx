@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { CommentItem, AppUser } from '../types';
-import { submitComment, deleteComment, isMockMode } from '../supabase-db';
+import { submitComment, deleteComment } from '../supabase-db';
 import { MessageSquare, Calendar, User, Trash2, ShieldAlert, Send, Stars, Lock, AlertCircle } from 'lucide-react';
 
 interface FeedbackSectionProps {
@@ -31,8 +31,8 @@ export default function FeedbackSection({
 
     if (!currentUser) return;
 
-    // Email verification rule check - unless running local mock mode
-    if (!isMockMode && !currentUser.emailVerified) {
+    // Email verification is required in production.
+    if (!currentUser.emailVerified) {
       setErrorMsg('Unauthorized creation: Your email has not been verified yet. Please check your inbox and click the verification link first.');
       return;
     }
@@ -106,7 +106,7 @@ export default function FeedbackSection({
                 )}
 
                 {/* Verification nudge if user registers but hasn't activated email yet */}
-                {!isMockMode && !currentUser.emailVerified && (
+                {!currentUser.emailVerified && (
                   <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-xl leading-relaxed flex items-start space-x-2">
                     <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-amber-700" />
                     <span>
@@ -131,7 +131,7 @@ export default function FeedbackSection({
                   <button
                     id="btn_submit_comment"
                     type="submit"
-                    disabled={isSubmitting || (!currentUser.emailVerified && !isMockMode)}
+                    disabled={isSubmitting || !currentUser.emailVerified}
                     className="flex items-center space-x-2 px-5 py-2.5 bg-brand-green hover:bg-brand-olive text-white font-bold text-xs uppercase tracking-wider rounded-full transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
                   >
                     <Send className="w-3.5 h-3.5" />

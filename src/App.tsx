@@ -24,10 +24,9 @@ import {
   subscribeToAuth, logout, 
   fetchPackages, fetchBookings, 
   fetchNews, fetchComments,
-  fetchSiteSettings, saveSiteSettings,
-  isMockMode 
+  fetchSiteSettings, saveSiteSettings
 } from './supabase-db';
-import { Compass, Mail, Phone, MapPin, Heart, Info } from 'lucide-react';
+import { Compass, Mail, Phone, MapPin, Heart } from 'lucide-react';
 
 type PageView = 
   | { type: 'home' }
@@ -38,9 +37,7 @@ type PageView =
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
-  const [isAdminViewActive, setIsAdminViewActive] = useState(() => {
-    return localStorage.getItem('safari_admin_view') === 'true';
-  });
+  const [isAdminViewActive, setIsAdminViewActive] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
   const [currentPage, setCurrentPage] = useState<PageView>({ type: 'home' });
@@ -61,13 +58,7 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = subscribeToAuth((user) => {
       setCurrentUser(user);
-      if (user && user.role === 'admin') {
-        setIsAdminViewActive(true);
-        localStorage.setItem('safari_admin_view', 'true');
-      } else {
-        setIsAdminViewActive(false);
-        localStorage.removeItem('safari_admin_view');
-      }
+      setIsAdminViewActive(user?.role === 'admin');
       setLoadingApp(false);
     });
     return () => unsubscribe();
@@ -83,9 +74,7 @@ export default function App() {
       setComments(cmt || []);
       setSiteSettings(settings || DEFAULT_SITE_SETTINGS);
 
-      const storedUser = localStorage.getItem('safari_current_user');
-      const isAdmin = currentUser?.role === 'admin' || (storedUser && JSON.parse(storedUser).role === 'admin');
-      if (isAdmin) {
+      if (currentUser?.role === 'admin') {
         const bks = await fetchBookings();
         setBookings(bks || []);
       }
@@ -108,8 +97,6 @@ export default function App() {
       await logout();
       setCurrentUser(null);
       setIsAdminViewActive(false);
-      localStorage.removeItem('safari_admin_view');
-      localStorage.removeItem('safari_current_user');
     } catch (err) { console.error("Logout failed:", err); }
   };
 
@@ -121,7 +108,6 @@ export default function App() {
     setCurrentUser(user);
     if (user.role === 'admin') {
       setIsAdminViewActive(true);
-      localStorage.setItem('safari_admin_view', 'true');
     }
   };
 
@@ -139,8 +125,7 @@ export default function App() {
     if (page.type !== 'home' && isAdminViewActive) setIsAdminViewActive(false);
   };
 
-  const isAdmin = currentUser?.role === 'admin' && 
-                  currentUser?.email?.toLowerCase().trim() === 'karimhemedi@yahoo.com';
+  const isAdmin = currentUser?.role === 'admin';
 
   const renderPage = () => {
     // Triple guard — role, email AND isAdminViewActive must all be true
@@ -240,12 +225,6 @@ export default function App() {
         onScrollSection={scrollSection}
       />
 
-      {isMockMode && (
-        <div id="mock_mode_bar" className="bg-brand-green text-brand-cream text-[11px] font-bold tracking-wider py-2 px-4 shadow-sm border-b border-brand-green/15 text-center flex items-center justify-center space-x-2">
-          <Info className="w-4 h-4 text-brand-olive shrink-0" />
-          <span>Running in offline mode — changes save to local storage.</span>
-        </div>
-      )}
 
       <main className="flex-grow">{renderPage()}</main>
 
