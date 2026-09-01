@@ -64,26 +64,65 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  const loadDatabaseData = async () => {
+  const loadDatabaseData = async (user: AppUser | null = currentUser) => {
     try {
       const [pkgs, nws, cmt, settings] = await Promise.all([
-        fetchPackages(), fetchNews(), fetchComments(), fetchSiteSettings()
+        fetchPackages(),
+        fetchNews(),
+        fetchComments(),
+        fetchSiteSettings()
       ]);
+
       setPackages(pkgs || []);
       setNews(nws || []);
       setComments(cmt || []);
       setSiteSettings(settings || DEFAULT_SITE_SETTINGS);
 
-      if (currentUser?.role === 'admin') {
+      if (user?.role === 'admin') {
         const bks = await fetchBookings();
         setBookings(bks || []);
       }
     } catch (err) {
-      console.error("Could not sync safari collections: ", err);
+      console.error('Could not sync safari collections:', err);
+      throw err;
     }
   };
 
-  useEffect(() => { loadDatabaseData(); }, [currentUser]);
+  useEffect(() => {
+    let mounted = true;
+
+    const initializeApp = async () => {
+      try {
+        await loadDatabaseData();
+      } catch (err) {
+        console.error('Application initialization failed:', err);
+      } finally {
+        if (mounted) {
+          setLoadingApp(false);
+        }
+      }
+    };
+
+    const unsubscribe = subscribeToAuth((user) => {
+      if (!mounted) return;
+
+      setCurrentUser(user);
+      setIsAdminViewActive(user?.role === 'admin');
+
+      if (user?.role === 'admin') {
+        loadDatabaseData(user).catch((err) => {
+          console.error('Failed to load admin data:', err);
+        });
+      }
+    });
+
+    initializeApp();
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [currentPage]);
 
@@ -126,6 +165,22 @@ export default function App() {
   };
 
   const isAdmin = currentUser?.role === 'admin';
+
+  if (loadingApp) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFCF8]">
+        <div className="text-center">
+          <div className="w-10 h-10 mx-auto mb-4 rounded-full border-4 border-brand-green/20 border-t-brand-green animate-spin" />
+          <h1 className="font-serif italic font-bold text-brand-dark text-lg">
+            African Wise Warrior Safaris
+          </h1>
+          <p className="mt-1 text-xs text-stone-400">
+            Loading your safari experience...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const renderPage = () => {
     // Triple guard — role, email AND isAdminViewActive must all be true

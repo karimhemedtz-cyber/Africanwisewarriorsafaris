@@ -56,9 +56,10 @@ export default function Hero({ onExploreClick, onContactClick, settings, isAdmin
           {settings.heroTitle}
         </h1>
 
-        <p className="max-w-2xl mx-auto text-stone-200 text-base sm:text-lg lg:text-xl font-medium leading-relaxed mb-10">
-          {settings.heroDescription}
-        </p>
+        <div
+          className="max-w-2xl mx-auto text-stone-200 text-base sm:text-lg lg:text-xl font-medium leading-relaxed mb-10 prose prose-invert prose-sm sm:prose-base max-w-none"
+          dangerouslySetInnerHTML={{ __html: settings.heroDescription || '' }}
+        />
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
