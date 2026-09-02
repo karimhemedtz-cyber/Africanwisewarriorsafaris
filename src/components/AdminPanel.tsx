@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { countries } from '../eastAfricaData';
 import { Package, Booking, NewsItem, CommentItem, SiteSettings, DEFAULT_SITE_SETTINGS } from '../types';
 import SiteSettingsEditor from './SiteSettingsEditor';
+import MediaPicker from './MediaPicker';
 import { CountryEditor, ParkEditor } from './CountryParkEditor';
 import { 
   savePackage, deletePackage, 
@@ -427,34 +428,18 @@ export default function AdminPanel({
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-bold text-stone-700 uppercase tracking-wider mb-1">Select Custom Safari Image Placeholder</label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2">
-                        {IMAGE_PRESETS.map((p, i) => (
-                          <div 
-                            key={i}
-                            onClick={() => setPackageForm({...packageForm, imageUrl: p.url})}
-                            className={`p-1.5 border rounded-lg cursor-pointer transition-all flex flex-col items-center ${
-                              packageForm.imageUrl === p.url 
-                                ? 'border-emerald-800 bg-emerald-50 text-emerald-950 font-bold' 
-                                : 'border-stone-200 hover:border-emerald-300'
-                            }`}
-                          >
-                            <img src={p.url} className="w-full h-12 object-cover rounded-md mb-1" alt={p.name} referrerPolicy="no-referrer" />
-                            <span className="text-[10px] text-center line-clamp-1">{p.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div>
-                        <label className="block text-[9px] font-bold text-stone-500 uppercase tracking-wider mb-1">Or Input custom image URL</label>
-                        <input
-                          id="input_package_image_url"
-                          type="text"
-                          className="w-full text-xs px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg focus:outline-emerald-800"
-                          placeholder="https://..."
-                          value={packageForm.imageUrl}
-                          onChange={(e) => setPackageForm({...packageForm, imageUrl: e.target.value})}
-                        />
-                      </div>
+                      <MediaPicker
+                        value={packageForm.imageUrl}
+                        onChange={(url) =>
+                          setPackageForm({
+                            ...packageForm,
+                            imageUrl: url
+                          })
+                        }
+                        folder="packages"
+                        label="Package Image"
+                        aspectClassName="h-48"
+                      />
                     </div>
 
                     <div>
