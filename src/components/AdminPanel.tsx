@@ -8,6 +8,7 @@ import { countries } from '../eastAfricaData';
 import { Package, Booking, NewsItem, CommentItem, SiteSettings, DEFAULT_SITE_SETTINGS } from '../types';
 import SiteSettingsEditor from './SiteSettingsEditor';
 import MediaPicker from './MediaPicker';
+import RichTextEditor from './RichTextEditor';
 import { CountryEditor, ParkEditor } from './CountryParkEditor';
 import { 
   savePackage, deletePackage, 
@@ -443,14 +444,19 @@ export default function AdminPanel({
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-bold text-stone-700 uppercase tracking-wider mb-1">Package Itinerary Details / Description</label>
-                      <textarea
-                        id="textarea_package_desc"
-                        required
-                        className="w-full text-xs px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg focus:outline-emerald-800 h-28 resize-none"
-                        placeholder="Provide details about lodging guides, balloon safaris, included meals and amenities..."
+                      <label className="block text-[10px] font-bold text-stone-700 uppercase tracking-wider mb-1">
+                        Package Itinerary Details / Description
+                      </label>
+                      <RichTextEditor
                         value={packageForm.description}
-                        onChange={(e) => setPackageForm({...packageForm, description: e.target.value})}
+                        onChange={(value) =>
+                          setPackageForm({
+                            ...packageForm,
+                            description: value
+                          })
+                        }
+                        placeholder="Provide details about lodging guides, balloon safaris, included meals and amenities..."
+                        minHeight="180px"
                       />
                     </div>
 
