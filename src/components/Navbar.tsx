@@ -14,6 +14,7 @@ interface NavbarProps {
   onToggleAdminView: () => void;
   isAdminViewActive: boolean;
   onNavigateHome: () => void;
+  onNavigateLuxury: () => void;
   onNavigateDestinations: () => void;
   onNavigateBooking: () => void;
   onScrollSection: (id: string) => void;
@@ -26,6 +27,7 @@ export default function Navbar({
   onToggleAdminView,
   isAdminViewActive,
   onNavigateHome,
+  onNavigateLuxury,
   onNavigateDestinations,
   onNavigateBooking,
   onScrollSection
@@ -73,7 +75,7 @@ export default function Navbar({
               Home
             </button>
             <button 
-              onClick={() => handleScroll('packages')}
+              onClick={() => { setMobileMenuOpen(false); onNavigateLuxury(); }}
               className="hover:text-brand-green transition-colors cursor-pointer"
             >
               Luxury Safaris
@@ -189,7 +191,7 @@ export default function Navbar({
               Home
             </button>
             <button
-              onClick={() => handleScroll('packages')}
+              onClick={() => { setMobileMenuOpen(false); onNavigateLuxury(); }}
               className="block w-full text-left px-3 py-2 text-brand-olive font-bold text-xs uppercase tracking-widest hover:bg-brand-green/5 hover:text-brand-green rounded-lg"
             >
               Luxury Safaris

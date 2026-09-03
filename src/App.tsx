@@ -18,6 +18,8 @@ import DestinationsPage from './pages/DestinationsPage';
 import CountryPage from './pages/CountryPage';
 import ParkPage from './pages/ParkPage';
 import BookingPage from './pages/BookingPage';
+import LuxurySafarisPage from './pages/LuxurySafarisPage';
+import PackageDetailPage from './pages/PackageDetailPage';
 import { AppUser, Package, Booking, NewsItem, CommentItem, SiteSettings, DEFAULT_SITE_SETTINGS } from './types';
 import { Country, Park } from './eastAfricaData';
 import { 
@@ -30,6 +32,8 @@ import { Compass, Mail, Phone, MapPin, Heart } from 'lucide-react';
 
 type PageView = 
   | { type: 'home' }
+  | { type: 'luxury' }
+  | { type: 'package'; pkg: Package }
   | { type: 'destinations' }
   | { type: 'country'; country: Country }
   | { type: 'park'; park: Park; country: Country }
@@ -196,6 +200,28 @@ export default function App() {
     }
 
     switch (currentPage.type) {
+      case 'luxury':
+        return (
+          <LuxurySafarisPage
+            packages={packages}
+            onSelectPackage={(pkg) => navigateTo({ type: 'package', pkg })}
+          />
+        );
+
+      case 'package':
+        return (
+          <PackageDetailPage
+            pkg={currentPage.pkg}
+            onBack={() => navigateTo({ type: 'luxury' })}
+            onBook={() =>
+              navigateTo({
+                type: 'booking',
+                preselectedPackageId: currentPage.pkg.id
+              })
+            }
+          />
+        );
+
       case 'destinations':
         return (
           <DestinationsPage
@@ -241,23 +267,17 @@ export default function App() {
         return (
           <div id="guest_view_stack" className="animate-fade-in animate-duration-500">
             <Hero 
-              onExploreClick={() => scrollSection('packages')}
+              onExploreClick={() => navigateTo({ type: 'luxury' })}
               onContactClick={() => scrollSection('contact')}
               settings={siteSettings}
               isAdmin={isAdmin}
               onEditHero={() => setHeroEditorOpen(true)}
-            />
-            <PackageFlow 
-              packages={packages} currentUser={currentUser}
-              onOpenAuth={handleOpenAuth}
-              onBookNow={(pkgId) => navigateTo({ type: 'booking', preselectedPackageId: pkgId })}
             />
             <ContactSection
               settings={siteSettings}
               isAdmin={isAdmin}
               onEdit={() => setContactEditorOpen(true)}
             />
-            <NewsSection news={news} />
             <FeedbackSection 
               comments={comments} currentUser={currentUser}
               onOpenAuth={handleOpenAuth} onRefreshComments={loadDatabaseData}
@@ -275,6 +295,7 @@ export default function App() {
         onToggleAdminView={() => setIsAdminViewActive(!isAdminViewActive)}
         isAdminViewActive={isAdminViewActive}
         onNavigateHome={() => navigateTo({ type: 'home' })}
+        onNavigateLuxury={() => navigateTo({ type: 'luxury' })}
         onNavigateDestinations={() => navigateTo({ type: 'destinations' })}
         onNavigateBooking={() => navigateTo({ type: 'booking' })}
         onScrollSection={scrollSection}
