@@ -15,6 +15,7 @@ interface NavbarProps {
   isAdminViewActive: boolean;
   onNavigateHome: () => void;
   onNavigateLuxury: () => void;
+  onNavigateBlog: () => void;
   onNavigateDestinations: () => void;
   onNavigateBooking: () => void;
   onScrollSection: (id: string) => void;
@@ -28,6 +29,7 @@ export default function Navbar({
   isAdminViewActive,
   onNavigateHome,
   onNavigateLuxury,
+  onNavigateBlog,
   onNavigateDestinations,
   onNavigateBooking,
   onScrollSection
@@ -92,8 +94,8 @@ export default function Navbar({
             >
               Book Now
             </button>
-            <button 
-              onClick={() => handleScroll('news')}
+            <button
+              onClick={() => { setMobileMenuOpen(false); onNavigateBlog(); }}
               className="hover:text-brand-green transition-colors cursor-pointer"
             >
               Safari Blog
@@ -209,7 +211,7 @@ export default function Navbar({
               Book Now
             </button>
             <button
-              onClick={() => handleScroll('news')}
+              onClick={() => { setMobileMenuOpen(false); onNavigateBlog(); }}
               className="block w-full text-left px-3 py-2 text-brand-olive font-bold text-xs uppercase tracking-widest hover:bg-brand-green/5 hover:text-brand-green rounded-lg"
             >
               Safari Blog

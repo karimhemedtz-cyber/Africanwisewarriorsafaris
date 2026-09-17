@@ -642,27 +642,33 @@ export default function AdminPanel({
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-[10px] font-bold text-stone-700 uppercase tracking-wider mb-1">Scenic Image URL (Optional)</label>
-                      <input
-                        id="input_news_image"
-                        type="text"
-                        className="w-full text-xs px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg focus:outline-emerald-800"
-                        placeholder="https://images.unsplash.com/your-scenic-photo"
-                        value={newsForm.imageUrl}
-                        onChange={(e) => setNewsForm({...newsForm, imageUrl: e.target.value})}
-                      />
-                    </div>
+                    <MediaPicker
+                      value={newsForm.imageUrl}
+                      onChange={(url) =>
+                        setNewsForm({
+                          ...newsForm,
+                          imageUrl: url
+                        })
+                      }
+                      folder="news"
+                      label="Scenic Image"
+                      aspectClassName="h-48"
+                    />
 
                     <div>
-                      <label className="block text-[10px] font-bold text-stone-700 uppercase tracking-wider mb-1">Article Body Content</label>
-                      <textarea
-                        id="textarea_news_content"
-                        required
-                        className="w-full text-xs px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg focus:outline-emerald-800 h-32 resize-none"
-                        placeholder="Write conservation programs updates, tracking safari guides, cheetah observations, local warrior manyattas events log..."
+                      <label className="block text-[10px] font-bold text-stone-700 uppercase tracking-wider mb-1">
+                        Article Body Content
+                      </label>
+                      <RichTextEditor
                         value={newsForm.content}
-                        onChange={(e) => setNewsForm({...newsForm, content: e.target.value})}
+                        onChange={(value) =>
+                          setNewsForm({
+                            ...newsForm,
+                            content: value
+                          })
+                        }
+                        placeholder="Write conservation updates, safari field reports, wildlife observations, expedition stories and news..."
+                        minHeight="220px"
                       />
                     </div>
 

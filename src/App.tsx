@@ -20,6 +20,7 @@ import ParkPage from './pages/ParkPage';
 import BookingPage from './pages/BookingPage';
 import LuxurySafarisPage from './pages/LuxurySafarisPage';
 import PackageDetailPage from './pages/PackageDetailPage';
+import BlogPage from './pages/BlogPage';
 import { AppUser, Package, Booking, NewsItem, CommentItem, SiteSettings, DEFAULT_SITE_SETTINGS } from './types';
 import { Country, Park } from './eastAfricaData';
 import { 
@@ -34,6 +35,7 @@ type PageView =
   | { type: 'home' }
   | { type: 'luxury' }
   | { type: 'package'; pkg: Package }
+  | { type: 'blog' }
   | { type: 'destinations' }
   | { type: 'country'; country: Country }
   | { type: 'park'; park: Park; country: Country }
@@ -222,6 +224,9 @@ export default function App() {
           />
         );
 
+      case 'blog':
+        return <BlogPage news={news} />;
+
       case 'destinations':
         return (
           <DestinationsPage
@@ -296,6 +301,7 @@ export default function App() {
         isAdminViewActive={isAdminViewActive}
         onNavigateHome={() => navigateTo({ type: 'home' })}
         onNavigateLuxury={() => navigateTo({ type: 'luxury' })}
+        onNavigateBlog={() => navigateTo({ type: 'blog' })}
         onNavigateDestinations={() => navigateTo({ type: 'destinations' })}
         onNavigateBooking={() => navigateTo({ type: 'booking' })}
         onScrollSection={scrollSection}
