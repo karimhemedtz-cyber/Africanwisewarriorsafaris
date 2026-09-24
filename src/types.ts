@@ -66,15 +66,39 @@ export interface SiteSettings {
   whatsappNumber: string;
   // Countries & Parks (stored as JSON overrides)
   countryOverrides: Record<string, {
+    name?: string;
+    capital?: string;
     tagline?: string;
     description?: string;
     heroImage?: string;
   }>;
   parkOverrides: Record<string, {
+    name?: string;
     tagline?: string;
     description?: string;
     coverImage?: string;
+    highlights?: string[];
     gallery?: { url: string; caption: string }[];
+  }>;
+  customCountries?: Array<{
+    id: string;
+    name: string;
+    capital: string;
+    flag: string;
+    tagline: string;
+    description: string;
+    heroImage: string;
+    parks: Array<{
+      id: string;
+      name: string;
+      country: string;
+      tagline: string;
+      description: string;
+      highlights: string[];
+      bestTime: string;
+      coverImage: string;
+      gallery: { url: string; caption: string }[];
+    }>;
   }>;
 }
 
@@ -90,4 +114,5 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   whatsappNumber: '255750916698',
   countryOverrides: {},
   parkOverrides: {},
+  customCountries: [],
 };
