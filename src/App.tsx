@@ -22,7 +22,7 @@ import LuxurySafarisPage from './pages/LuxurySafarisPage';
 import PackageDetailPage from './pages/PackageDetailPage';
 import BlogPage from './pages/BlogPage';
 import { AppUser, Package, Booking, NewsItem, CommentItem, SiteSettings, DEFAULT_SITE_SETTINGS } from './types';
-import { Country, Park } from './eastAfricaData';
+import { countries,  Country, Park } from './eastAfricaData';
 import { 
   subscribeToAuth, logout, 
   fetchPackages, fetchBookings, 
@@ -230,7 +230,13 @@ export default function App() {
       case 'destinations':
         return (
           <DestinationsPage
-            onSelectCountry={(country) => navigateTo({ type: 'country', country })}
+            countries={[
+              ...countries,
+              ...(siteSettings.customCountries ?? []),
+            ]}
+            onSelectCountry={(country) =>
+              navigateTo({ type: 'country', country })
+            }
           />
         );
       case 'country':

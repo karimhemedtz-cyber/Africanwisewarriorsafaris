@@ -10,6 +10,7 @@ import SiteSettingsEditor from './SiteSettingsEditor';
 import MediaPicker from './MediaPicker';
 import RichTextEditor from './RichTextEditor';
 import { CountryEditor, ParkEditor } from './CountryParkEditor';
+import CountryParkManager from './CountryParkManager';
 import { 
   savePackage, deletePackage, 
   saveNews, deleteNews, 
@@ -826,6 +827,14 @@ export default function AdminPanel({
                     <p><strong>WhatsApp:</strong> +{siteSettings.whatsappNumber}</p>
                     <p><strong>Address:</strong> {siteSettings.address}</p>
                   </div>
+                </div>
+
+                {/* Custom Countries & National Parks */}
+                <div className="mb-6">
+                  <CountryParkManager
+                    settings={siteSettings}
+                    onSave={onSaveSettings}
+                  />
                 </div>
 
                 {/* Country & Park Pages */}

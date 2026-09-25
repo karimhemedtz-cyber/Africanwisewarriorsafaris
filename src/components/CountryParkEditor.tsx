@@ -1,234 +1,479 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React, { useState } from 'react';
-import { SiteSettings } from '../types';
-import { Country, Park } from '../eastAfricaData';
+import React, { useEffect, useState } from 'react';
 import { X, Save, Plus, Trash2 } from 'lucide-react';
-
-const IMAGE_PRESETS = [
-  { name: 'Serengeti', url: '/images/package_serengeti_1779964123153.png' },
-  { name: 'Maasai Mara', url: '/images/package_masaimara_1779964145785.png' },
-  { name: 'Ngorongoro', url: '/images/package_ngorongoro_1779964167185.png' },
-];
+import RichTextEditor from './RichTextEditor';
+import MediaPicker from './MediaPicker';
+import type { Country, Park } from '../eastAfricaData';
+import type { SiteSettings } from '../types';
 
 interface CountryEditorProps {
   country: Country;
   settings: SiteSettings;
-  onSave: (updated: SiteSettings) => Promise<void>;
+  onSave: (settings: SiteSettings) => Promise<void>;
   onClose: () => void;
-}
-
-export function CountryEditor({ country, settings, onSave, onClose }: CountryEditorProps) {
-  const existing = settings.countryOverrides[country.id] || {};
-  const [tagline, setTagline] = useState(existing.tagline ?? country.tagline);
-  const [description, setDescription] = useState(existing.description ?? country.description);
-  const [heroImage, setHeroImage] = useState(existing.heroImage ?? country.heroImage);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  const handleSave = async () => {
-    setSaving(true);
-    const updated: SiteSettings = {
-      ...settings,
-      countryOverrides: {
-        ...settings.countryOverrides,
-        [country.id]: { tagline, description, heroImage }
-      }
-    };
-    await onSave(updated);
-    setSaved(true);
-    setTimeout(() => { setSaved(false); onClose(); }, 1000);
-    setSaving(false);
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl">
-        <div className="h-1.5 bg-brand-green rounded-t-2xl" />
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h2 className="font-serif font-bold italic text-brand-dark text-lg">Edit {country.name} Page</h2>
-              <p className="text-xs text-stone-400 mt-0.5">Overrides the default country content.</p>
-            </div>
-            <button onClick={onClose} className="p-2 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition-colors"><X className="w-5 h-5" /></button>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">Tagline</label>
-              <input type="text" value={tagline} onChange={e => setTagline(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm bg-stone-50 border border-stone-200 rounded-xl focus:border-brand-green focus:outline-none" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">Description</label>
-              <textarea value={description} onChange={e => setDescription(e.target.value)} rows={5}
-                className="w-full px-3.5 py-2.5 text-sm bg-stone-50 border border-stone-200 rounded-xl focus:border-brand-green focus:outline-none resize-none" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">Hero Image</label>
-              <div className="grid grid-cols-3 gap-2 mb-2">
-                {IMAGE_PRESETS.map(p => (
-                  <button key={p.url} type="button" onClick={() => setHeroImage(p.url)}
-                    className={`rounded-lg overflow-hidden border-2 transition-all ${heroImage === p.url ? 'border-brand-green' : 'border-transparent'}`}>
-                    <img src={p.url} alt={p.name} className="w-full h-12 object-cover" />
-                    <span className="block text-[9px] text-center py-0.5 truncate px-1 text-stone-500">{p.name}</span>
-                  </button>
-                ))}
-              </div>
-              <input type="text" placeholder="Or custom URL…" value={heroImage} onChange={e => setHeroImage(e.target.value)}
-                className="w-full px-3.5 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:border-brand-green focus:outline-none" />
-            </div>
-          </div>
-
-          <div className="mt-6 flex justify-end space-x-3">
-            <button onClick={onClose} className="px-5 py-2.5 text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-xl text-sm font-semibold">Cancel</button>
-            <button onClick={handleSave} disabled={saving}
-              className="flex items-center space-x-2 px-6 py-2.5 bg-brand-green hover:bg-brand-olive text-white font-bold text-sm rounded-xl shadow-sm active:scale-95 disabled:opacity-60 transition-all">
-              <Save className="w-4 h-4" />
-              <span>{saved ? 'Saved!' : saving ? 'Saving…' : 'Save'}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 interface ParkEditorProps {
   park: Park;
+  country: Country;
   settings: SiteSettings;
-  onSave: (updated: SiteSettings) => Promise<void>;
+  onSave: (settings: SiteSettings) => Promise<void>;
   onClose: () => void;
 }
 
-export function ParkEditor({ park, settings, onSave, onClose }: ParkEditorProps) {
-  const existing = settings.parkOverrides[park.id] || {};
-  const [tagline, setTagline] = useState(existing.tagline ?? park.tagline);
-  const [description, setDescription] = useState(existing.description ?? park.description);
-  const [coverImage, setCoverImage] = useState(existing.coverImage ?? park.coverImage);
-  const [gallery, setGallery] = useState<{ url: string; caption: string }[]>(
-    existing.gallery ?? park.gallery
+export const CountryEditor: React.FC<CountryEditorProps> = ({
+  country,
+  settings,
+  onSave,
+  onClose,
+}) => {
+  const existing = settings.countryOverrides[country.id] || {};
+
+  const [name, setName] = useState(existing.name ?? country.name);
+  const [capital, setCapital] = useState(existing.capital ?? country.capital);
+  const [tagline, setTagline] = useState(existing.tagline ?? country.tagline);
+  const [description, setDescription] = useState(
+    existing.description ?? country.description
+  );
+  const [heroImage, setHeroImage] = useState(
+    existing.heroImage ?? country.heroImage
   );
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  const addGalleryItem = () => setGallery(prev => [...prev, { url: '', caption: '' }]);
-  const removeGalleryItem = (i: number) => setGallery(prev => prev.filter((_, idx) => idx !== i));
-  const updateGalleryItem = (i: number, field: 'url' | 'caption', val: string) =>
-    setGallery(prev => prev.map((item, idx) => idx === i ? { ...item, [field]: val } : item));
 
   const handleSave = async () => {
+    if (!name.trim() || !capital.trim() || !tagline.trim() || !description.trim()) {
+      alert('Country name, capital, tagline and description are required.');
+      return;
+    }
+
     setSaving(true);
-    const updated: SiteSettings = {
-      ...settings,
-      parkOverrides: {
-        ...settings.parkOverrides,
-        [park.id]: { tagline, description, coverImage, gallery }
-      }
-    };
-    await onSave(updated);
-    setSaved(true);
-    setTimeout(() => { setSaved(false); onClose(); }, 1000);
-    setSaving(false);
+
+    try {
+      await onSave({
+        ...settings,
+        countryOverrides: {
+          ...settings.countryOverrides,
+          [country.id]: {
+            ...settings.countryOverrides[country.id],
+            name: name.trim(),
+            capital: capital.trim(),
+            tagline: tagline.trim(),
+            description,
+            heroImage,
+          },
+        },
+      });
+
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert('Failed to save country settings.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl">
-        <div className="h-1.5 bg-brand-green rounded-t-2xl" />
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h2 className="font-serif font-bold italic text-brand-dark text-lg">Edit {park.name} Page</h2>
-              <p className="text-xs text-stone-400 mt-0.5">Overrides default park content and gallery.</p>
-            </div>
-            <button onClick={onClose} className="p-2 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition-colors"><X className="w-5 h-5" /></button>
+    <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-0 sm:p-4">
+      <div className="w-full h-full sm:h-auto sm:max-h-[95vh] sm:max-w-3xl bg-white sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-stone-200 bg-stone-50 shrink-0">
+          <div>
+            <h2 className="font-serif font-bold text-stone-900 text-lg">
+              Edit Country
+            </h2>
+            <p className="text-xs text-stone-400 mt-0.5">
+              {country.name}
+            </p>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">Tagline</label>
-              <input type="text" value={tagline} onChange={e => setTagline(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm bg-stone-50 border border-stone-200 rounded-xl focus:border-brand-green focus:outline-none" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">Description</label>
-              <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4}
-                className="w-full px-3.5 py-2.5 text-sm bg-stone-50 border border-stone-200 rounded-xl focus:border-brand-green focus:outline-none resize-none" />
-            </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-stone-200 text-stone-600"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-            {/* Cover Image */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">Cover / Hero Image</label>
-              <div className="grid grid-cols-3 gap-2 mb-2">
-                {IMAGE_PRESETS.map(p => (
-                  <button key={p.url} type="button" onClick={() => setCoverImage(p.url)}
-                    className={`rounded-lg overflow-hidden border-2 transition-all ${coverImage === p.url ? 'border-brand-green' : 'border-transparent'}`}>
-                    <img src={p.url} alt={p.name} className="w-full h-12 object-cover" />
-                    <span className="block text-[9px] text-center py-0.5 truncate px-1 text-stone-500">{p.name}</span>
-                  </button>
-                ))}
-              </div>
-              <input type="text" placeholder="Or custom URL…" value={coverImage} onChange={e => setCoverImage(e.target.value)}
-                className="w-full px-3.5 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl focus:border-brand-green focus:outline-none" />
-            </div>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="block">
+              <span className="text-xs font-bold text-stone-600">
+                Country Name
+              </span>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-brand-green"
+              />
+            </label>
 
-            {/* Gallery */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-stone-600">Gallery Photos</label>
-                <button type="button" onClick={addGalleryItem}
-                  className="flex items-center space-x-1 text-xs text-brand-green font-bold hover:text-brand-olive transition-colors">
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Photo</span>
-                </button>
-              </div>
-              <div className="space-y-3">
-                {gallery.map((item, i) => (
-                  <div key={i} className="bg-stone-50 rounded-xl p-3 border border-stone-200 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Photo {i + 1}</span>
-                      <button type="button" onClick={() => removeGalleryItem(i)}
-                        className="text-red-400 hover:text-red-600 transition-colors">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    {/* Quick presets for this gallery item */}
-                    <div className="flex space-x-1.5">
-                      {IMAGE_PRESETS.map(p => (
-                        <button key={p.url} type="button" onClick={() => updateGalleryItem(i, 'url', p.url)}
-                          className={`rounded overflow-hidden border transition-all flex-shrink-0 ${item.url === p.url ? 'border-brand-green' : 'border-transparent'}`}>
-                          <img src={p.url} alt={p.name} className="w-10 h-8 object-cover" />
-                        </button>
-                      ))}
-                    </div>
-                    <input type="text" placeholder="Image URL…" value={item.url} onChange={e => updateGalleryItem(i, 'url', e.target.value)}
-                      className="w-full px-3 py-1.5 text-xs bg-white border border-stone-200 rounded-lg focus:border-brand-green focus:outline-none" />
-                    <input type="text" placeholder="Caption…" value={item.caption} onChange={e => updateGalleryItem(i, 'caption', e.target.value)}
-                      className="w-full px-3 py-1.5 text-xs bg-white border border-stone-200 rounded-lg focus:border-brand-green focus:outline-none" />
-                    {item.url && (
-                      <img src={item.url} alt="preview" className="w-full h-24 object-cover rounded-lg mt-1" onError={e => (e.currentTarget.style.display = 'none')} />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <label className="block">
+              <span className="text-xs font-bold text-stone-600">
+                Capital
+              </span>
+              <input
+                value={capital}
+                onChange={(e) => setCapital(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-brand-green"
+              />
+            </label>
           </div>
 
-          <div className="mt-6 flex justify-end space-x-3">
-            <button onClick={onClose} className="px-5 py-2.5 text-stone-600 bg-stone-100 hover:bg-stone-200 rounded-xl text-sm font-semibold">Cancel</button>
-            <button onClick={handleSave} disabled={saving}
-              className="flex items-center space-x-2 px-6 py-2.5 bg-brand-green hover:bg-brand-olive text-white font-bold text-sm rounded-xl shadow-sm active:scale-95 disabled:opacity-60 transition-all">
-              <Save className="w-4 h-4" />
-              <span>{saved ? 'Saved!' : saving ? 'Saving…' : 'Save'}</span>
-            </button>
-          </div>
+          <label className="block">
+            <span className="text-xs font-bold text-stone-600">
+              Tagline
+            </span>
+            <input
+              value={tagline}
+              onChange={(e) => setTagline(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-brand-green"
+            />
+          </label>
+
+          <RichTextEditor
+            value={description}
+            onChange={setDescription}
+            placeholder="Write the country description..."
+            minHeight="220px"
+          />
+
+          <MediaPicker
+            value={heroImage}
+            onChange={setHeroImage}
+            folder="countries"
+            label="Country Hero Image"
+            aspectClassName="h-56"
+          />
+        </div>
+
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 px-4 sm:px-6 py-4 border-t border-stone-200 bg-stone-50 shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-stone-200 bg-white text-sm font-bold text-stone-600"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-brand-green text-white text-sm font-bold disabled:opacity-50"
+          >
+            <Save className="w-4 h-4" />
+            {saving ? 'Saving...' : 'Save Country'}
+          </button>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export const ParkEditor: React.FC<ParkEditorProps> = ({
+  park,
+  country,
+  settings,
+  onSave,
+  onClose,
+}) => {
+  const existing = settings.parkOverrides[park.id] || {};
+
+  const [name, setName] = useState(existing.name ?? park.name);
+  const [tagline, setTagline] = useState(existing.tagline ?? park.tagline);
+  const [description, setDescription] = useState(
+    existing.description ?? park.description
+  );
+  const [coverImage, setCoverImage] = useState(
+    existing.coverImage ?? park.coverImage
+  );
+  const [highlights, setHighlights] = useState<string[]>(
+    existing.highlights ?? park.highlights
+  );
+  const [gallery, setGallery] = useState(
+    existing.gallery ?? park.gallery
+  );
+  const [saving, setSaving] = useState(false);
+
+  const updateHighlight = (index: number, value: string) => {
+    setHighlights((items) =>
+      items.map((item, itemIndex) =>
+        itemIndex === index ? value : item
+      )
+    );
+  };
+
+  const addHighlight = () => {
+    setHighlights((items) => [...items, '']);
+  };
+
+  const removeHighlight = (index: number) => {
+    setHighlights((items) =>
+      items.filter((_, itemIndex) => itemIndex !== index)
+    );
+  };
+
+  const addGalleryImage = (url: string) => {
+    if (!url) return;
+
+    setGallery((items) => [
+      ...items,
+      {
+        url,
+        caption: '',
+      },
+    ]);
+  };
+
+  const updateGalleryCaption = (index: number, caption: string) => {
+    setGallery((items) =>
+      items.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, caption } : item
+      )
+    );
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setGallery((items) =>
+      items.filter((_, itemIndex) => itemIndex !== index)
+    );
+  };
+
+  const handleSave = async () => {
+    const cleanHighlights = highlights
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    if (!name.trim() || !tagline.trim() || !description.trim()) {
+      alert('Park name, tagline and description are required.');
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      await onSave({
+        ...settings,
+        parkOverrides: {
+          ...settings.parkOverrides,
+          [park.id]: {
+            ...settings.parkOverrides[park.id],
+            name: name.trim(),
+            tagline: tagline.trim(),
+            description,
+            coverImage,
+            highlights: cleanHighlights,
+            gallery,
+          },
+        },
+      });
+
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert('Failed to save park settings.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!gallery.length) {
+      setGallery([]);
+    }
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-0 sm:p-4">
+      <div className="w-full h-full sm:h-auto sm:max-h-[95vh] sm:max-w-4xl bg-white sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-stone-200 bg-stone-50 shrink-0">
+          <div>
+            <h2 className="font-serif font-bold text-stone-900 text-lg">
+              Edit National Park
+            </h2>
+            <p className="text-xs text-stone-400 mt-0.5">
+              {country.name} · {park.name}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-stone-200 text-stone-600"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="block">
+              <span className="text-xs font-bold text-stone-600">
+                Park Name
+              </span>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-brand-green"
+              />
+            </label>
+
+            <label className="block">
+              <span className="text-xs font-bold text-stone-600">
+                Tagline
+              </span>
+              <input
+                value={tagline}
+                onChange={(e) => setTagline(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-brand-green"
+              />
+            </label>
+          </div>
+
+          <RichTextEditor
+            value={description}
+            onChange={setDescription}
+            placeholder="Write the national park description..."
+            minHeight="220px"
+          />
+
+          <MediaPicker
+            value={coverImage}
+            onChange={setCoverImage}
+            folder="parks"
+            label="Park Cover Image"
+            aspectClassName="h-56"
+          />
+
+          <div>
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div>
+                <h3 className="text-sm font-bold text-stone-800">
+                  Highlights
+                </h3>
+                <p className="text-xs text-stone-400">
+                  Add or remove park highlights.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={addHighlight}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-stone-100 text-stone-700 text-xs font-bold"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {highlights.map((highlight, index) => (
+                <div key={`${index}-${highlight}`} className="flex gap-2">
+                  <input
+                    value={highlight}
+                    onChange={(e) =>
+                      updateHighlight(index, e.target.value)
+                    }
+                    placeholder={`Highlight ${index + 1}`}
+                    className="flex-1 rounded-lg border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-brand-green"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removeHighlight(index)}
+                    className="p-2.5 rounded-lg bg-red-50 text-red-600"
+                    aria-label={`Remove highlight ${index + 1}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+
+              {!highlights.length && (
+                <p className="text-xs text-stone-400 border border-dashed border-stone-200 rounded-lg p-4 text-center">
+                  No highlights added yet.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-3">
+              <h3 className="text-sm font-bold text-stone-800">
+                Park Photos
+              </h3>
+              <p className="text-xs text-stone-400 mt-0.5">
+                Select photos directly from the device.
+              </p>
+            </div>
+
+            <MediaPicker
+              value=""
+              onChange={addGalleryImage}
+              folder="parks/gallery"
+              label="Add Park Photo"
+              aspectClassName="h-44"
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              {gallery.map((image, index) => (
+                <div
+                  key={`${image.url}-${index}`}
+                  className="border border-stone-200 rounded-xl overflow-hidden bg-stone-50"
+                >
+                  <img
+                    src={image.url}
+                    alt={image.caption || `${park.name} photo ${index + 1}`}
+                    className="w-full h-40 object-cover"
+                  />
+
+                  <div className="p-3 space-y-2">
+                    <input
+                      value={image.caption}
+                      onChange={(e) =>
+                        updateGalleryCaption(index, e.target.value)
+                      }
+                      placeholder="Photo caption"
+                      className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm outline-none focus:border-brand-green"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => removeGalleryImage(index)}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-red-600"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Remove photo
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 px-4 sm:px-6 py-4 border-t border-stone-200 bg-stone-50 shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-stone-200 bg-white text-sm font-bold text-stone-600"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-brand-green text-white text-sm font-bold disabled:opacity-50"
+          >
+            <Save className="w-4 h-4" />
+            {saving ? 'Saving...' : 'Save Park'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
