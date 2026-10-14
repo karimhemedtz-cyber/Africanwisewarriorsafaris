@@ -22,7 +22,33 @@ export interface Booking {
   packageName: string;
   people: number;
   message: string;
-  status: 'pending' | 'reviewed';
+  status: 'pending' | 'approved' | 'rejected' | 'reviewed';
+  createdAt: string;
+}
+
+export interface Conversation {
+  id: string;
+  userId: string;
+  subject: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ConversationChatMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderRole: 'admin' | 'user';
+  message: string;
+  createdAt: string;
+}
+
+export interface BookingMessage {
+  id: string;
+  bookingId: string;
+  senderId: string;
+  senderRole: 'admin' | 'user';
+  message: string;
   createdAt: string;
 }
 

@@ -79,10 +79,17 @@ export default function AdminPanel({
 
   const triggerRefresh = async (msg: string) => {
     setLoading(true);
-    await onRefreshData();
-    setSuccessMsg(msg);
-    setLoading(false);
-    setTimeout(() => setSuccessMsg(''), 3500);
+    try {
+      await onRefreshData();
+      setSuccessMsg(msg);
+      window.setTimeout(() => setSuccessMsg(''), 3500);
+    } catch (err) {
+      console.error(err);
+      alert('Database synchronization failed. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
   // --- PACKAGE ACTIONS ---
@@ -112,19 +119,39 @@ export default function AdminPanel({
 
   const handleSavePackageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const price = Number(packageForm.price);
+    const days = Number(packageForm.days);
+
     if (!packageForm.name.trim() || !packageForm.route.trim() || !packageForm.description.trim()) {
-      alert('All package fields are required.');
+      alert('Package name, route and description are required.');
       return;
     }
+
+    if (!Number.isFinite(price) || price <= 0) {
+      alert('Package price must be greater than 0.');
+      return;
+    }
+
+    if (!Number.isInteger(days) || days < 1) {
+      alert('Safari duration must be a whole number of at least 1 day.');
+      return;
+    }
+
+    if (!packageForm.imageUrl.trim()) {
+      alert('Please select a package image before saving.');
+      return;
+    }
+
+    if (loading) return;
 
     try {
       const packageId = editingPackageId || 'pkg_' + Date.now();
       const updatedPkg: Package = {
         id: packageId,
-        name: packageForm.name,
-        price: Number(packageForm.price) || 0,
-        route: packageForm.route,
-        days: Number(packageForm.days) || 1,
+        name: packageForm.name.trim(),
+        price,
+        route: packageForm.route.trim(),
+        days,
         description: packageForm.description,
         imageUrl: packageForm.imageUrl,
         createdAt: new Date().toISOString()
@@ -172,17 +199,24 @@ export default function AdminPanel({
   const handleSaveNewsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newsForm.title.trim() || !newsForm.content.trim()) {
-      alert('News title and content are mandatory columns.');
+      alert('News title and article body are required.');
       return;
     }
+
+    if (!newsForm.imageUrl.trim()) {
+      alert('Please select a scenic image before publishing the article.');
+      return;
+    }
+
+    if (loading) return;
 
     try {
       const newsId = editingNewsId || 'news_' + Date.now();
       const article: NewsItem = {
         id: newsId,
-        title: newsForm.title,
+        title: newsForm.title.trim(),
         content: newsForm.content,
-        imageUrl: newsForm.imageUrl,
+        imageUrl: newsForm.imageUrl.trim(),
         createdAt: new Date().toISOString()
       };
 
@@ -207,14 +241,20 @@ export default function AdminPanel({
   };
 
   // --- BOOKING ACTIONS ---
-  const handleToggleBookingReviewed = async (id: string, currentStatus: 'pending' | 'reviewed') => {
-    const nextStatus = currentStatus === 'pending' ? 'reviewed' : 'pending';
+  const handleBookingDecision = async (
+    id: string,
+    status: 'approved' | 'rejected'
+  ) => {
     try {
-      await updateBookingStatus(id, nextStatus);
-      await triggerRefresh('Booking log status has been updated.');
+      await updateBookingStatus(id, status);
+      await triggerRefresh(
+        status === 'approved'
+          ? 'Booking has been approved.'
+          : 'Booking has been rejected.'
+      );
     } catch (err) {
       console.error(err);
-      alert('Failed to modify proposal state.');
+      alert('Failed to update booking decision.');
     }
   };
 
@@ -551,7 +591,7 @@ export default function AdminPanel({
                     </div>
                   ) : (
                     <div className="divide-y divide-stone-100">
-                      {bookings.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(b => (
+                      {[...bookings].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(b => (
                         <div key={b.id} className="p-6 space-y-3">
                           
                           {/* Top Row User tags */}
@@ -577,27 +617,41 @@ export default function AdminPanel({
                             </div>
                             <div>
                               <span className="block text-[10px] text-stone-400 font-bold uppercase tracking-wider">Log proposal state</span>
-                              <button
-                                id={`btn_toggle_booking_status_${b.id}`}
-                                onClick={() => handleToggleBookingReviewed(b.id, b.status)}
-                                className={`inline-flex items-center space-x-1 mt-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-colors ${
-                                  b.status === 'reviewed' 
-                                    ? 'bg-emerald-100 text-emerald-800' 
-                                    : 'bg-amber-100 text-amber-800'
-                                }`}
-                              >
-                                {b.status === 'reviewed' ? (
-                                  <>
-                                    <CheckCircle className="w-3 h-3 text-emerald-700" />
-                                    <span>Reviewed</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Clock className="w-3 h-3 text-amber-700" />
-                                    <span>Pending</span>
-                                  </>
-                                )}
-                              </button>
+                              {b.status === 'pending' ? (
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            id={`btn_approve_booking_${b.id}`}
+                            onClick={() => handleBookingDecision(b.id, 'approved')}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200"
+                          >
+                            Approve
+                          </button>
+
+                          <button
+                            id={`btn_reject_booking_${b.id}`}
+                            onClick={() => handleBookingDecision(b.id, 'rejected')}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      ) : (
+                        <span
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                            b.status === 'approved'
+                              ? 'bg-green-100 text-green-700'
+                              : b.status === 'rejected'
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-slate-100 text-slate-700'
+                          }`}
+                        >
+                          {b.status === 'approved'
+                            ? 'Approved'
+                            : b.status === 'rejected'
+                            ? 'Rejected'
+                            : 'Reviewed'}
+                        </span>
+                      )}
                             </div>
                           </div>
 

@@ -18,6 +18,7 @@ import DestinationsPage from './pages/DestinationsPage';
 import CountryPage from './pages/CountryPage';
 import ParkPage from './pages/ParkPage';
 import BookingPage from './pages/BookingPage';
+import MessagesPage from './pages/MessagesPage';
 import LuxurySafarisPage from './pages/LuxurySafarisPage';
 import PackageDetailPage from './pages/PackageDetailPage';
 import BlogPage from './pages/BlogPage';
@@ -39,7 +40,8 @@ type PageView =
   | { type: 'destinations' }
   | { type: 'country'; country: Country }
   | { type: 'park'; park: Park; country: Country }
-  | { type: 'booking'; preselectedPackageId?: string };
+  | { type: 'booking'; preselectedPackageId?: string }
+  | { type: 'messages' };
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
@@ -265,6 +267,20 @@ export default function App() {
             onEditPark={() => setParkEditTarget(currentPage.park)}
           />
         );
+      case 'messages':
+        return currentUser ? (
+          <MessagesPage
+            currentUser={currentUser}
+            onBack={() => navigateTo({ type: 'home' })}
+          />
+        ) : (
+          <div className="mx-auto max-w-xl px-4 py-20 text-center">
+            <h1 className="font-serif text-2xl font-bold text-brand-dark">Sign in to use Messages</h1>
+            <p className="mt-3 text-sm text-stone-600">Please sign in to contact the safari team.</p>
+            <button onClick={() => handleOpenAuth('signin')} className="mt-5 rounded-full bg-brand-green px-6 py-3 text-sm font-semibold text-white">Sign In</button>
+          </div>
+        );
+
       case 'booking':
         return (
           <BookingPage
@@ -310,6 +326,7 @@ export default function App() {
         onNavigateBlog={() => navigateTo({ type: 'blog' })}
         onNavigateDestinations={() => navigateTo({ type: 'destinations' })}
         onNavigateBooking={() => navigateTo({ type: 'booking' })}
+        onNavigateMessages={() => navigateTo({ type: 'messages' })}
         onScrollSection={scrollSection}
       />
 

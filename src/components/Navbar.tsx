@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { AppUser } from '../types';
-import { Compass, Menu, X, Landmark, User, LogOut, ShieldCheck } from 'lucide-react';
+import { Compass, Menu, X, Landmark, User, LogOut, ShieldCheck, MessageSquare } from 'lucide-react';
 
 interface NavbarProps {
   currentUser: AppUser | null;
@@ -18,6 +18,7 @@ interface NavbarProps {
   onNavigateBlog: () => void;
   onNavigateDestinations: () => void;
   onNavigateBooking: () => void;
+  onNavigateMessages: () => void;
   onScrollSection: (id: string) => void;
 }
 
@@ -31,8 +32,7 @@ export default function Navbar({
   onNavigateLuxury,
   onNavigateBlog,
   onNavigateDestinations,
-  onNavigateBooking,
-  onScrollSection
+  onNavigateBooking, onNavigateMessages, onScrollSection
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -216,12 +216,28 @@ export default function Navbar({
             >
               Safari Blog
             </button>
+            {currentUser && (
+              <button
+                onClick={() => { setMobileMenuOpen(false); onNavigateMessages(); }}
+                className="block w-full text-left px-3 py-2 text-brand-olive font-bold text-xs uppercase tracking-widest hover:bg-brand-green/5 hover:text-brand-green rounded-lg"
+              >
+                Messages
+              </button>
+            )}
             <button
               onClick={() => handleScroll('feedback')}
               className="block w-full text-left px-3 py-2 text-brand-olive font-bold text-xs uppercase tracking-widest hover:bg-brand-green/5 hover:text-brand-green rounded-lg"
             >
               Reviews
             </button>
+            {currentUser && (
+              <button
+                onClick={() => { setMobileMenuOpen(false); onNavigateMessages(); }}
+                className="inline-flex items-center gap-1.5 hover:text-brand-green transition-colors cursor-pointer"
+              >
+                <MessageSquare className="h-3.5 w-3.5" /> Messages
+              </button>
+            )}
             <button
               onClick={() => handleScroll('contact')}
               className="block w-full text-left px-3 py-2 text-brand-olive font-bold text-xs uppercase tracking-widest hover:bg-brand-green/5 hover:text-brand-green rounded-lg"

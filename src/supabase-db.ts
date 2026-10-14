@@ -5,9 +5,8 @@
 
 import { supabase, isSupabaseConfigured } from './supabase';
 import {
-  Package, Booking, NewsItem, CommentItem, AppUser, UserRole,
-  SiteSettings, DEFAULT_SITE_SETTINGS
-} from './types';
+  Package, Booking, BookingMessage, NewsItem, CommentItem, AppUser, UserRole,
+  SiteSettings, DEFAULT_SITE_SETTINGS, Conversation, ConversationChatMessage } from './types';
 
 const ADMIN_EMAIL = 'karimuhemedi@yahoo.com';
 
@@ -176,8 +175,202 @@ export const fetchBookings = async (): Promise<Booking[]> => {
   }));
 };
 
-export const updateBookingStatus = async (id: string, status: 'pending' | 'reviewed'): Promise<void> => {
-  const { error } = await requireSupabase().from('bookings').update({ status }).eq('id', id);
+export const updateBookingStatus = async (
+  id: string,
+  status: 'pending' | 'approved' | 'rejected' | 'reviewed'
+): Promise<void> => {
+  const client = requireSupabase();
+
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('Authentication required.');
+
+  const { data: profile, error: profileError } = await client
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError) throw profileError;
+  if (profile?.role !== 'admin') {
+    throw new Error('Administrator privileges are required.');
+  }
+
+  const { error } = await client
+    .from('bookings')
+    .update({ status })
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
+// ─────────────────────────────────────────────
+// BOOKING MESSAGES
+// ─────────────────────────────────────────────
+
+
+export const fetchConversations = async (): Promise<Conversation[]> => {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('conversations')
+    .select('id, user_id, subject, created_at, updated_at')
+    .order('updated_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    userId: row.user_id,
+    subject: row.subject,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }));
+};
+
+export const createConversation = async (subject: string): Promise<string> => {
+  const client = requireSupabase();
+  const text = subject.trim();
+  if (!text) throw new Error('Please enter a subject for your message.');
+  if (text.length > 160) throw new Error('Subject must be 160 characters or fewer.');
+
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if (authError) throw authError;
+  if (!user) throw new Error('Please sign in to start a conversation.');
+
+  const id = 'conversation_' + crypto.randomUUID();
+  const { error } = await client.from('conversations').insert({
+    id,
+    user_id: user.id,
+    subject: text,
+  });
+  if (error) throw error;
+  return id;
+};
+
+export const fetchConversationMessages = async (
+  conversationId: string
+): Promise<ConversationChatMessage[]> => {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('conversation_messages')
+    .select('id, conversation_id, sender_id, sender_role, message, created_at')
+    .eq('conversation_id', conversationId)
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    conversationId: row.conversation_id,
+    senderId: row.sender_id,
+    senderRole: row.sender_role,
+    message: row.message,
+    createdAt: row.created_at,
+  }));
+};
+
+export const sendConversationChatMessage = async (
+  conversationId: string,
+  message: string
+): Promise<void> => {
+  const client = requireSupabase();
+  const text = message.trim();
+  if (!text) throw new Error('Message cannot be empty.');
+  if (text.length > 5000) throw new Error('Message is too long. Maximum is 5000 characters.');
+
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if (authError) throw authError;
+  if (!user) throw new Error('Authentication required.');
+
+  const { data: profile, error: profileError } = await client
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (profileError) throw profileError;
+
+  const { error } = await client.from('conversation_messages').insert({
+    id: 'chat_message_' + crypto.randomUUID(),
+    conversation_id: conversationId,
+    sender_id: user.id,
+    sender_role: profile?.role === 'admin' ? 'admin' : 'user',
+    message: text,
+  });
+  if (error) throw error;
+};
+
+export const fetchBookingMessages = async (
+  bookingId: string
+): Promise<BookingMessage[]> => {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('booking_messages')
+    .select('*')
+    .eq('booking_id', bookingId)
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+
+  return (data || []).map(row => ({
+    id: row.id,
+    bookingId: row.booking_id,
+    senderId: row.sender_id,
+    senderRole: row.sender_role,
+    message: row.message,
+    createdAt: row.created_at
+  }));
+};
+
+export const sendBookingMessage = async (
+  bookingId: string,
+  message: string
+): Promise<void> => {
+  const client = requireSupabase();
+  const text = message.trim();
+
+  if (!text) {
+    throw new Error('Message cannot be empty.');
+  }
+
+  if (text.length > 5000) {
+    throw new Error('Message is too long. Maximum length is 5000 characters.');
+  }
+
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('Authentication required.');
+
+  const { data: booking, error: bookingError } = await client
+    .from('bookings')
+    .select('id, user_id, status')
+    .eq('id', bookingId)
+    .single();
+
+  if (bookingError) throw bookingError;
+  if (!booking) throw new Error('Booking not found.');
+
+  const { data: profile, error: profileError } = await client
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError) throw profileError;
+
+  const senderRole = profile?.role === 'admin' ? 'admin' : 'user';
+
+  if (senderRole === 'admin' && booking.status !== 'approved') {
+    throw new Error('Admin can only reply after the booking has been approved.');
+  }
+
+  if (senderRole === 'user' && booking.user_id !== user.id) {
+    throw new Error('You can only message your own booking.');
+  }
+
+  const { error } = await client
+    .from('booking_messages')
+    .insert({
+      id: 'booking_message_' + crypto.randomUUID(),
+      booking_id: bookingId,
+      sender_id: user.id,
+      sender_role: senderRole,
+      message: text
+    });
+
   if (error) throw error;
 };
 
