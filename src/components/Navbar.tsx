@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { AppUser } from '../types';
-import { Compass, Menu, X, Landmark, User, LogOut, ShieldCheck, MessageSquare } from 'lucide-react';
+import { Compass, Menu, X, Landmark, User, LogOut, ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
   currentUser: AppUser | null;
@@ -19,6 +19,7 @@ interface NavbarProps {
   onNavigateDestinations: () => void;
   onNavigateBooking: () => void;
   onNavigateMessages: () => void;
+  onNavigateMyBookings: () => void;
   onScrollSection: (id: string) => void;
 }
 
@@ -32,7 +33,7 @@ export default function Navbar({
   onNavigateLuxury,
   onNavigateBlog,
   onNavigateDestinations,
-  onNavigateBooking, onNavigateMessages, onScrollSection
+  onNavigateBooking, onNavigateMessages, onNavigateMyBookings, onScrollSection
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -112,6 +113,15 @@ export default function Navbar({
           <div className="hidden md:flex items-center space-x-4">
             {currentUser ? (
               <div className="flex items-center space-x-4 bg-white border border-brand-green/10 p-1.5 pl-3 rounded-full">
+                {currentUser.role === 'user' && (
+                  <button
+                    id="btn_my_bookings_desktop"
+                    onClick={onNavigateMyBookings}
+                    className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-brand-green hover:bg-brand-green/5 rounded-full transition-colors"
+                  >
+                    My Bookings
+                  </button>
+                )}
                 <div className="flex flex-col items-end">
                   <span className="text-xs font-semibold text-stone-900 leading-none">
                     {currentUser.displayName}
@@ -216,6 +226,15 @@ export default function Navbar({
             >
               Safari Blog
             </button>
+            {currentUser?.role === 'user' && (
+              <button
+                id="btn_my_bookings_mobile"
+                onClick={() => { setMobileMenuOpen(false); onNavigateMyBookings(); }}
+                className="block w-full text-left px-3 py-2 text-brand-olive font-bold text-xs uppercase tracking-widest hover:bg-brand-green/5 hover:text-brand-green rounded-lg"
+              >
+                My Bookings
+              </button>
+            )}
             {currentUser && (
               <button
                 onClick={() => { setMobileMenuOpen(false); onNavigateMessages(); }}
@@ -230,14 +249,6 @@ export default function Navbar({
             >
               Reviews
             </button>
-            {currentUser && (
-              <button
-                onClick={() => { setMobileMenuOpen(false); onNavigateMessages(); }}
-                className="inline-flex items-center gap-1.5 hover:text-brand-green transition-colors cursor-pointer"
-              >
-                <MessageSquare className="h-3.5 w-3.5" /> Messages
-              </button>
-            )}
             <button
               onClick={() => handleScroll('contact')}
               className="block w-full text-left px-3 py-2 text-brand-olive font-bold text-xs uppercase tracking-widest hover:bg-brand-green/5 hover:text-brand-green rounded-lg"
