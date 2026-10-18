@@ -31,3 +31,41 @@ body {
     transform: translateY(0);
   }
 }
+
+/* Responsive layout and readable long-form content */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+}
+
+.prose,
+.rich-content {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.prose p,
+.prose li,
+.rich-content p,
+.rich-content li {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

@@ -635,7 +635,7 @@ export default function RichTextEditor({
           onKeyUp={updateToolbarState}
           onMouseUp={updateToolbarState}
           onKeyDown={handleKeyDown}
-          className={`prose prose-sm max-w-none overflow-y-auto px-4 py-4 text-stone-700 outline-none [&_ul]:list-inside [&_ol]:list-inside [&_ul]:my-2 [&_ol]:my-2 ${
+          className={`prose prose-base min-w-0 max-w-none break-words overflow-y-auto px-4 py-4 text-base leading-relaxed text-stone-700 outline-none [&_ul]:list-inside [&_ol]:list-inside [&_ul]:my-2 [&_ol]:my-2 ${
             isFullscreen ? 'h-[calc(100vh-105px)]' : ''
           }`}
           style={{ minHeight: isFullscreen ? undefined : minHeight }}

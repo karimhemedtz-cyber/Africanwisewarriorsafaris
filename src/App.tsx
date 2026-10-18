@@ -19,14 +19,15 @@ import CountryPage from './pages/CountryPage';
 import ParkPage from './pages/ParkPage';
 import BookingPage from './pages/BookingPage';
 import MessagesPage from './pages/MessagesPage';
+import MyBookingsPage from './pages/MyBookingsPage';
 import LuxurySafarisPage from './pages/LuxurySafarisPage';
 import PackageDetailPage from './pages/PackageDetailPage';
 import BlogPage from './pages/BlogPage';
 import { AppUser, Package, Booking, NewsItem, CommentItem, SiteSettings, DEFAULT_SITE_SETTINGS } from './types';
 import { countries,  Country, Park } from './eastAfricaData';
-import { 
-  subscribeToAuth, logout, 
-  fetchPackages, fetchBookings, 
+import {
+  subscribeToAuth, logout,
+  fetchPackages, fetchBookings, fetchMyBookings,
   fetchNews, fetchComments,
   fetchSiteSettings, saveSiteSettings
 } from './supabase-db';
@@ -41,7 +42,8 @@ type PageView =
   | { type: 'country'; country: Country }
   | { type: 'park'; park: Park; country: Country }
   | { type: 'booking'; preselectedPackageId?: string }
-  | { type: 'messages' };
+  | { type: 'messages' }
+  | { type: 'my-bookings' };
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
@@ -281,6 +283,15 @@ export default function App() {
           </div>
         );
 
+      case 'my-bookings':
+        return (
+          <MyBookingsPage
+            currentUser={currentUser}
+            onBack={() => navigateTo({ type: 'home' })}
+            onOpenAuth={handleOpenAuth}
+          />
+        );
+
       case 'booking':
         return (
           <BookingPage
@@ -327,6 +338,7 @@ export default function App() {
         onNavigateDestinations={() => navigateTo({ type: 'destinations' })}
         onNavigateBooking={() => navigateTo({ type: 'booking' })}
         onNavigateMessages={() => navigateTo({ type: 'messages' })}
+        onNavigateMyBookings={() => navigateTo({ type: 'my-bookings' })}
         onScrollSection={scrollSection}
       />
 

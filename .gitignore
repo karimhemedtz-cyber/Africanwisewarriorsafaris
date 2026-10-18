@@ -32,3 +32,6 @@ npm-debug.log*
 *.tsbuildinfo
 .env
 .env.*
+
+# Keep the safe environment template in Git
+!.env.example

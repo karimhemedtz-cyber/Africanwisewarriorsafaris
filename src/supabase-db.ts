@@ -175,6 +175,34 @@ export const fetchBookings = async (): Promise<Booking[]> => {
   }));
 };
 
+export const fetchMyBookings = async (): Promise<Booking[]> => {
+  const client = requireSupabase();
+
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if (authError) throw authError;
+  if (!user) throw new Error('Please sign in to view your bookings.');
+
+  const { data, error } = await client
+    .from('bookings')
+    .select('id, name, email, package_id, package_name, people, message, status, created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    packageId: row.package_id,
+    packageName: row.package_name,
+    people: row.people,
+    message: row.message,
+    status: row.status as Booking['status'],
+    createdAt: row.created_at,
+  }));
+};
+
 export const updateBookingStatus = async (
   id: string,
   status: 'pending' | 'approved' | 'rejected' | 'reviewed'
