@@ -243,16 +243,73 @@ export const fetchConversations = async (): Promise<Conversation[]> => {
     .select('id, user_id, subject, created_at, updated_at')
     .order('updated_at', { ascending: false });
   if (error) throw error;
-  return (data || []).map((row: any) => ({
+
+  const rows = data || [];
+  const userIds = [...new Set(rows.map((row: any) => row.user_id))];
+  const namesById = new Map<string, string>();
+
+  if (userIds.length > 0) {
+    const { data: profiles, error: profilesError } = await client
+      .from('profiles')
+      .select('id, display_name')
+      .in('id', userIds);
+    if (profilesError) throw profilesError;
+    (profiles || []).forEach((profile: any) => {
+      namesById.set(profile.id, profile.display_name || 'Customer');
+    });
+  }
+
+  return rows.map((row: any) => ({
     id: row.id,
     userId: row.user_id,
+    userName: namesById.get(row.user_id) || 'Customer',
     subject: row.subject,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }));
 };
 
-export const createConversation = async (subject: string): Promise<string> => {
+export const fetchMessageCustomers = async (search: string): Promise<Array<{
+  id: string;
+  displayName: string;
+}>> => {
+  const client = requireSupabase();
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if (authError) throw authError;
+  if (!user) throw new Error('Authentication required.');
+
+  const { data: ownProfile, error: profileError } = await client
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (profileError) throw profileError;
+  if (ownProfile?.role !== 'admin') {
+    throw new Error('Only an administrator can search customers for a new chat.');
+  }
+
+  const term = search.trim();
+  if (term.length < 2) return [];
+
+  const { data, error } = await client
+    .from('profiles')
+    .select('id, display_name')
+    .eq('role', 'user')
+    .ilike('display_name', `%${term}%`)
+    .order('display_name', { ascending: true })
+    .limit(20);
+
+  if (error) throw error;
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    displayName: row.display_name || 'Customer',
+  }));
+};
+
+export const createConversation = async (
+  subject: string,
+  targetUserId?: string
+): Promise<string> => {
   const client = requireSupabase();
   const text = subject.trim();
   if (!text) throw new Error('Please enter a subject for your message.');
@@ -262,10 +319,25 @@ export const createConversation = async (subject: string): Promise<string> => {
   if (authError) throw authError;
   if (!user) throw new Error('Please sign in to start a conversation.');
 
+  const { data: profile, error: profileError } = await client
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (profileError) throw profileError;
+
+  const isAdmin = profile?.role === 'admin';
+  if (isAdmin && !targetUserId) {
+    throw new Error('Choose a customer before starting a chat.');
+  }
+  if (!isAdmin && targetUserId && targetUserId !== user.id) {
+    throw new Error('You can only start a conversation for your own account.');
+  }
+
   const id = 'conversation_' + crypto.randomUUID();
   const { error } = await client.from('conversations').insert({
     id,
-    user_id: user.id,
+    user_id: isAdmin ? targetUserId : user.id,
     subject: text,
   });
   if (error) throw error;
