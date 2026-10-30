@@ -29,6 +29,7 @@ export interface Booking {
 export interface Conversation {
   id: string;
   userId: string;
+  userName?: string;
   subject: string;
   createdAt: string;
   updatedAt: string;
